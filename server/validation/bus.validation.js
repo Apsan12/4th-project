@@ -115,8 +115,6 @@ export const updateBusSchema = z
       })
       .optional(),
 
-   
-
     model: z
       .string()
       .min(2, "Model must be at least 2 characters")
@@ -158,7 +156,6 @@ export const updateBusSchema = z
 
     isActive: z.boolean().optional(),
 
-  
     description: z
       .string()
       .max(500, "Description must be at most 500 characters")

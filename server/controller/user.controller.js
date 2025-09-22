@@ -31,6 +31,7 @@ import { createUserSchema } from "../validation/user.validation.js";
 import { hashPassword } from "../services/user.service.js";
 import { clearAuthCookies, setAuthCookies } from "../config/cookie.js";
 import User from "../model/user.model.js";
+import crypto from "crypto";
 
 export const registerUserController = async (req, res) => {
   try {
@@ -201,7 +202,9 @@ export const requestPasswordReset = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    const user = await User.findOne({
+      where: { email: email.trim().toLowerCase() },
+    });
     if (!user)
       return res
         .status(200)
@@ -236,15 +239,32 @@ export const requestPasswordReset = async (req, res) => {
 
 // Reset password (with token)
 export const resetPassword = async (req, res) => {
-  const { email, newPassword } = req.body;
-  const user = await findByEmail(email);
-  if (!user) return res.status(404).json({ message: "User not found" });
+  try {
+    const { email, newPassword } = req.body; // or get email from token payload
 
-  const hashed = await hashPassword(newPassword);
-  await user.update({ password: hashed });
+    if (!newPassword) {
+      return res.status(400).json({ message: "New password is required" });
+    }
 
-  res.json({ message: "Password updated successfully" });
+    // Find user by email
+    const user = await findByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hashed = await hashPassword(newPassword);
+
+    await user.update(
+      { where: { email } },
+      { password: hashed }
+    );
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 // Update basic profile fields
 

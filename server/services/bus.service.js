@@ -16,6 +16,7 @@ export const createBus = async (busData) => {
     isActive,
     amenities,
     description,
+    licensePlate
   } = busData;
 
   // Check if bus number already exists
@@ -27,7 +28,6 @@ export const createBus = async (busData) => {
   }
 
   // Check if license plate already exists
- 
 
   // Verify route exists
   const route = await Route.findByPk(routeId);
@@ -38,8 +38,16 @@ export const createBus = async (busData) => {
   // Verify driver exists if provided
   if (driverId) {
     const driver = await User.findByPk(driverId);
-    if (!driver || driver.role !== "driver") {
+    if (!driver || driver.role !== "busDriver") {
       throw new Error("Valid driver not found");
+    }
+  }
+  if (licensePlate) {
+    const existingLicense = await Bus.findOne({
+      where: { licensePlate: licensePlate.toUpperCase() },
+    });
+    if (existingLicense) {
+      throw new Error("License plate already exists");
     }
   }
 
@@ -53,6 +61,8 @@ export const createBus = async (busData) => {
     isActive: isActive !== undefined ? isActive : true,
     amenities: amenities || [],
     description: description?.trim(),
+    licensePlate: licensePlate ? licensePlate.toUpperCase() : null,
+    amenities: amenities || [],
   });
 
   return bus;

@@ -18,6 +18,8 @@ import {
   getAllDriversController,
   getAvailableDriversController,
   updateUserRoleController,
+  requestPasswordReset,
+  resetPassword,
 } from "../controller/user.controller.js";
 
 import authenticated from "../middleware/auth.js";
@@ -32,6 +34,9 @@ userRoute.post("/refresh-token", refreshTokenController);
 userRoute.post("/logout", authenticated, logoutUserController);
 userRoute.get("/me", authenticated, getOwnProfileController);
 userRoute.put("/update-user", authenticated, updateUserController);
+userRoute.post("/password-reset", requestPasswordReset);
+userRoute.post("/reset-password", resetPassword);
+
 userRoute.get(
   "/",
   authenticated,

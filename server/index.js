@@ -28,7 +28,6 @@ await createSuperAdmin();
 
 app.use(routes);
 
-app.use("/api/users", routes);
 
 // Root endpoint
 app.get("/", (req, res) => {
@@ -42,6 +41,7 @@ app.get("/", (req, res) => {
       users: "/api/v1/users",
       routes: "/api/v1/routes",
       buses: "/api/v1/buses",
+      booking: "/api/v1/bookings",
     },
     timestamp: new Date().toISOString(),
   });
@@ -55,6 +55,10 @@ app.use((req, res) => {
     availableEndpoints: {
       docs: "/api/v1/docs",
       health: "/api/v1/health",
+      users: "/api/v1/users",
+      routes: "/api/v1/routes",
+      buses: "/api/v1/buses",
+      booking: "/api/v1/bookings",
     },
   });
 });

@@ -18,14 +18,9 @@ class BookingController {
         userInfo,
         requestInfo
       );
-
       // Send confirmation email (non-blocking)
-      try {
-        await BookingController.sendBookingConfirmationEmail(booking);
-      } catch (emailError) {
-        console.error("Failed to send booking confirmation email:", emailError);
-        // Don't fail the booking if email fails
-      }
+      await BookingController.sendBookingConfirmationEmail(booking);
+
 
       res.status(201).json({
         success: true,
@@ -72,7 +67,7 @@ class BookingController {
 
       // Non-admin users can only view their own bookings
       const userId = userInfo.role === "admin" ? null : userInfo.id;
-      
+
       const booking = await BookingService.getBookingBySlug(slug, userId);
 
       res.status(200).json({
@@ -97,9 +92,10 @@ class BookingController {
       const options = req.query;
 
       // Admin can get bookings for any user
-      const userId = userInfo.role === "admin" && req.query.userId 
-        ? parseInt(req.query.userId) 
-        : userInfo.id;
+      const userId =
+        userInfo.role === "admin" && req.query.userId
+          ? parseInt(req.query.userId)
+          : userInfo.id;
 
       const result = await BookingService.getUserBookings(userId, options);
 
@@ -157,7 +153,10 @@ class BookingController {
 
       // Send status update email (non-blocking)
       try {
-        await BookingController.sendStatusUpdateEmail(updatedBooking, statusData.status);
+        await BookingController.sendStatusUpdateEmail(
+          updatedBooking,
+          statusData.status
+        );
       } catch (emailError) {
         console.error("Failed to send status update email:", emailError);
       }
@@ -239,7 +238,9 @@ class BookingController {
     try {
       const { limit = 10 } = req.query;
 
-      const popularRoutes = await BookingService.getPopularRoutes(parseInt(limit));
+      const popularRoutes = await BookingService.getPopularRoutes(
+        parseInt(limit)
+      );
 
       res.status(200).json({
         success: true,
@@ -268,9 +269,9 @@ class BookingController {
       res.status(200).json({
         success: true,
         message: `${updatedBookings.length} bookings updated successfully`,
-        data: { 
+        data: {
           updatedCount: updatedBookings.length,
-          bookings: updatedBookings.map(b => ({
+          bookings: updatedBookings.map((b) => ({
             slug: b.slug,
             status: b.status,
             paymentStatus: b.paymentStatus,
@@ -369,13 +370,20 @@ class BookingController {
     const statusMessages = {
       confirmed: "Your booking has been confirmed!",
       cancelled: "Your booking has been cancelled.",
-      completed: "Your journey has been completed. Thank you for traveling with us!",
+      completed:
+        "Your journey has been completed. Thank you for traveling with us!",
     };
 
     const emailData = {
       to: booking.contactEmail,
-      subject: `Booking ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)} - ${booking.bookingReference}`,
-      html: BookingController.generateStatusUpdateEmailHTML(booking, newStatus, statusMessages[newStatus]),
+      subject: `Booking ${
+        newStatus.charAt(0).toUpperCase() + newStatus.slice(1)
+      } - ${booking.bookingReference}`,
+      html: BookingController.generateStatusUpdateEmailHTML(
+        booking,
+        newStatus,
+        statusMessages[newStatus]
+      ),
       text: `${statusMessages[newStatus]} Booking Reference: ${booking.bookingReference}`,
     };
 
@@ -397,7 +405,7 @@ class BookingController {
   static generateBookingConfirmationEmailHTML(booking) {
     const seatList = booking.seatNumbers.join(", ");
     const passengerList = booking.passengerNames.join(", ");
-    
+
     return `
     <div style="max-width: 600px; margin: auto; background: rgba(249, 249, 249, 0.52); border-radius: 12px; padding: 30px; font-family: Arial, sans-serif; color: #333; line-height: 1.6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
       <div style="text-align: center; margin-bottom: 20px;">
@@ -409,17 +417,31 @@ class BookingController {
       <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #2b6cb0; margin-top: 0;">Booking Details</h3>
         <p><strong>Booking Reference:</strong> ${booking.bookingReference}</p>
-        <p><strong>Bus:</strong> ${booking.bus.busNumber} (${booking.bus.busType})</p>
-        <p><strong>Route:</strong> ${booking.bus.route.origin} → ${booking.bus.route.destination}</p>
-        <p><strong>Travel Date:</strong> ${new Date(booking.travelDate).toDateString()}</p>
+        <p><strong>Bus:</strong> ${booking.bus.busNumber} (${
+      booking.bus.busType
+    })</p>
+        <p><strong>Route:</strong> ${booking.bus.route.origin} → ${
+      booking.bus.route.destination
+    }</p>
+        <p><strong>Travel Date:</strong> ${new Date(
+          booking.travelDate
+        ).toDateString()}</p>
         <p><strong>Seat Numbers:</strong> ${seatList}</p>
         <p><strong>Passengers:</strong> ${passengerList}</p>
         <p><strong>Total Amount:</strong> ₹${booking.totalAmount}</p>
         <p><strong>Payment Status:</strong> ${booking.paymentStatus.toUpperCase()}</p>
       </div>
 
-      ${booking.boardingPoint ? `<p><strong>Boarding Point:</strong> ${booking.boardingPoint}</p>` : ''}
-      ${booking.droppingPoint ? `<p><strong>Dropping Point:</strong> ${booking.droppingPoint}</p>` : ''}
+      ${
+        booking.boardingPoint
+          ? `<p><strong>Boarding Point:</strong> ${booking.boardingPoint}</p>`
+          : ""
+      }
+      ${
+        booking.droppingPoint
+          ? `<p><strong>Dropping Point:</strong> ${booking.droppingPoint}</p>`
+          : ""
+      }
       
       <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
         <h4 style="color: #2b6cb0; margin-top: 0;">Important Information</h4>
@@ -441,7 +463,7 @@ class BookingController {
   static generateBookingConfirmationEmailText(booking) {
     const seatList = booking.seatNumbers.join(", ");
     const passengerList = booking.passengerNames.join(", ");
-    
+
     return `
 BOOKING CONFIRMED - ${booking.bookingReference}
 
@@ -454,8 +476,8 @@ Booking Details:
 - Total Amount: ₹${booking.totalAmount}
 - Payment Status: ${booking.paymentStatus.toUpperCase()}
 
-${booking.boardingPoint ? `Boarding Point: ${booking.boardingPoint}` : ''}
-${booking.droppingPoint ? `Dropping Point: ${booking.droppingPoint}` : ''}
+${booking.boardingPoint ? `Boarding Point: ${booking.boardingPoint}` : ""}
+${booking.droppingPoint ? `Dropping Point: ${booking.droppingPoint}` : ""}
 
 Important:
 - Arrive 15 minutes early at boarding point
@@ -478,8 +500,12 @@ Safe travels with GoBus!
       <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <p><strong>Booking Reference:</strong> ${booking.bookingReference}</p>
         <p><strong>Status:</strong> ${status.toUpperCase()}</p>
-        <p><strong>Route:</strong> ${booking.bus.route.origin} → ${booking.bus.route.destination}</p>
-        <p><strong>Travel Date:</strong> ${new Date(booking.travelDate).toDateString()}</p>
+        <p><strong>Route:</strong> ${booking.bus.route.origin} → ${
+      booking.bus.route.destination
+    }</p>
+        <p><strong>Travel Date:</strong> ${new Date(
+          booking.travelDate
+        ).toDateString()}</p>
       </div>
 
       <div style="text-align: center; margin-top: 30px;">

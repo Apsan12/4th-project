@@ -105,12 +105,37 @@ class BookingService {
         { transaction }
       );
 
+      // 7. Get booking data before committing
+      const createdBooking = await Booking.findOne({
+        where: { slug: booking.slug },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username", "email"],
+          },
+          {
+            model: Bus,
+            as: "bus",
+            include: [
+              {
+                model: Route,
+                as: "route",
+                attributes: ["id", "origin", "destination", "fare"],
+              },
+            ],
+          },
+        ],
+        transaction,
+      });
+
       await transaction.commit();
 
-      // 7. Return booking with related data
-      return await this.getBookingBySlug(booking.slug);
+      return createdBooking;
     } catch (error) {
-      await transaction.rollback();
+      if (transaction && !transaction.finished) {
+        await transaction.rollback();
+      }
       throw error;
     }
   }

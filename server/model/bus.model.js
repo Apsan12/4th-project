@@ -56,7 +56,7 @@ Bus.init(
       allowNull: false,
       validate: {
         min: 10,
-        max: 35,
+        max: 45,
       },
     },
     routeId: {
