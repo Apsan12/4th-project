@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import express from "express";
 import sequelize, { connectDB } from "./config/connectdb.js";
+import "./model/associations.js"; // Import associations
 import routes from "./routes/index.js";
 import createSuperAdmin from "./superadmin.js";
 import cookieParser from "cookie-parser";
@@ -10,8 +11,6 @@ config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-
 
 // Body parsing middleware
 app.use(express.json());
@@ -59,8 +58,6 @@ app.use((req, res) => {
     },
   });
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);

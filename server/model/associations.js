@@ -1,6 +1,7 @@
 import User from "./user.model.js";
 import Route from "./route.model.js";
 import Bus from "./bus.model.js";
+import Booking from "./booking.model.js";
 
 // Define associations between models
 
@@ -34,4 +35,34 @@ Bus.belongsTo(User, {
   onUpdate: "CASCADE",
 });
 
-export { User, Route, Bus };
+// User and Booking associations
+User.hasMany(Booking, {
+  foreignKey: "userId",
+  as: "bookings",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+Booking.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+// Bus and Booking associations
+Bus.hasMany(Booking, {
+  foreignKey: "busId",
+  as: "bookings",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+Booking.belongsTo(Bus, {
+  foreignKey: "busId",
+  as: "bus",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+export { User, Route, Bus, Booking };

@@ -2,6 +2,7 @@ import express from "express";
 import userRoutes from "./user.routes.js";
 import routeRoutes from "./route.routes.js";
 import busRoutes from "./bus.routes.js";
+import bookingRoutes from "./booking.routes.js";
 
 const router = express.Router();
 
@@ -12,6 +13,7 @@ const API_VERSION = "/api/v1";
 router.use(`${API_VERSION}/users`, userRoutes);
 router.use(`${API_VERSION}/routes`, routeRoutes);
 router.use(`${API_VERSION}/buses`, busRoutes);
+router.use(`${API_VERSION}/bookings`, bookingRoutes);
 
 // Health check endpoint
 router.get(`${API_VERSION}/health`, (req, res) => {
