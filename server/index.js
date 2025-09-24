@@ -6,11 +6,14 @@ import routes from "./routes/index.js";
 import createSuperAdmin from "./superadmin.js";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import cors from "cors";
 
 config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(cors());
 
 // Body parsing middleware
 app.use(express.json());
