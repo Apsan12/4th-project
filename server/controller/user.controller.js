@@ -44,7 +44,6 @@ export const registerUserController = async (req, res) => {
       }));
       return res.status(400).json({ errors, message: "Validation failed" });
     }
-
     const { username, email, password, phoneNumber } = result.data;
 
     const existingUser = await findByEmail(email);
@@ -54,7 +53,7 @@ export const registerUserController = async (req, res) => {
     const user = await createUser({ username, email, password, phoneNumber });
 
     const token = generateEmailVerificationToken(user.email);
-    const verificationLink = `http://localhost:3000/api/users/verify?token=${token}`;
+    const verificationLink = `http://localhost:5174/verify?token=${token}`;
 
     await sendMail(
       user.email,
@@ -254,17 +253,13 @@ export const resetPassword = async (req, res) => {
 
     const hashed = await hashPassword(newPassword);
 
-    await user.update(
-      { where: { email } },
-      { password: hashed }
-    );
+    await user.update({ where: { email } }, { password: hashed });
 
     res.json({ message: "Password updated successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Update basic profile fields
 

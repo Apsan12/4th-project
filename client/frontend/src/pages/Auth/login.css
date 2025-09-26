@@ -343,3 +343,137 @@
   position: relative;
   z-index: 1;
 }
+
+/* Verification Page Specific Styles */
+.loading-container {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.divider span {
+  background-color: #ffffff;
+  padding: 0 1rem;
+  color: #666666;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.resend-section {
+  margin-top: 1.5rem;
+}
+
+.resend-text {
+  text-align: center;
+  color: #666666;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.secondary-button {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+.secondary-button:hover {
+  background-color: #f8f8f8 !important;
+  transform: translateY(-1px);
+}
+
+.secondary-button:active {
+  background-color: #e8e8e8 !important;
+  transform: translateY(0);
+}
+
+.success-container {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 1rem;
+}
+
+.success-container p {
+  color: #000000;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.redirect-text {
+  color: #666666 !important;
+  font-size: 0.875rem !important;
+}
+
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.auth-links p {
+  color: #666666;
+  font-size: 0.875rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #000000;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0;
+  margin: 0;
+}
+
+.link-button:hover {
+  color: #333333;
+}
