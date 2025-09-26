@@ -1,5 +1,5 @@
-/* Mobile-first approach */
-.register-page {
+/* Login Page Styles - Black & White Theme */
+.login-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,7 +9,7 @@
   box-sizing: border-box;
 }
 
-.register-form {
+.login-form {
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 12px;
@@ -20,7 +20,7 @@
   border: 2px solid #000000;
 }
 
-.register-form h1 {
+.login-form h1 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #000000;
@@ -30,11 +30,12 @@
   letter-spacing: 1px;
 }
 
-.register-form .form-group {
+.form-group {
   margin-bottom: 1rem;
+  position: relative;
 }
 
-.register-form label {
+.login-form label {
   display: block;
   margin-bottom: 0.5rem;
   color: #333333;
@@ -44,7 +45,7 @@
   letter-spacing: 0.5px;
 }
 
-.register-form input {
+.login-form input {
   width: 100%;
   padding: 0.75rem;
   border: 2px solid #cccccc;
@@ -56,14 +57,14 @@
   color: #000000;
 }
 
-.register-form input:focus {
+.login-form input:focus {
   outline: none;
   border-color: #000000;
   background-color: #f5f5f5;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-.register-form input:invalid {
+.login-form input:invalid {
   border-color: #666666;
   background-color: #f9f9f9;
 }
@@ -72,31 +73,28 @@
   display: flex;
   align-items: center;
   margin-top: 0.5rem;
-  gap: 0.5rem;
 }
 
 .show-password-checkbox {
-  width: 16px;
-  height: 16px;
+  margin: 0 6px 0 0;
+  height: 14px;
+  width: 14px;
   cursor: pointer;
-  accent-color: #000000;
+  accent-color: #000000; /* modern browsers support this */
 }
 
 .show-password-label {
   font-size: 0.85rem;
   color: #666666;
   cursor: pointer;
-  margin: 0;
   font-weight: 400;
-  text-transform: none;
-  letter-spacing: normal;
 }
 
 .show-password-label:hover {
   color: #000000;
 }
 
-.register-form button {
+.login-form button {
   width: 100%;
   padding: 0.875rem;
   background-color: #000000;
@@ -112,7 +110,7 @@
   letter-spacing: 1px;
 }
 
-.register-form button:hover:not(:disabled) {
+.login-form button:hover:not(:disabled) {
   background-color: #ffffff;
   color: #000000;
   border-color: #000000;
@@ -120,12 +118,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.register-form button:active:not(:disabled) {
+.login-form button:active:not(:disabled) {
   transform: translateY(0);
   background-color: #f5f5f5;
 }
 
-.register-form button:disabled {
+.login-form button:disabled {
   background-color: #666666;
   color: #cccccc;
   border-color: #666666;
@@ -134,14 +132,14 @@
   box-shadow: none;
 }
 
-.register-form .login-link {
+.register-link {
   text-align: center;
   margin-top: 1.5rem;
   color: #666666;
   font-size: 0.9rem;
 }
 
-.register-form .login-link a {
+.register-link a {
   color: #000000;
   text-decoration: none;
   font-weight: 600;
@@ -149,7 +147,7 @@
   transition: border-bottom 0.3s ease;
 }
 
-.register-form .login-link a:hover {
+.register-link a:hover {
   border-bottom: 2px solid #000000;
   text-decoration: none;
 }
@@ -176,59 +174,59 @@
 
 /* Tablet styles */
 @media (min-width: 768px) {
-  .register-page {
+  .login-page {
     padding: 2rem;
   }
 
-  .register-form {
+  .login-form {
     padding: 2.5rem;
     max-width: 450px;
   }
 
-  .register-form h1 {
+  .login-form h1 {
     font-size: 1.75rem;
     margin-bottom: 2rem;
   }
 
-  .register-form input {
+  .login-form input {
     padding: 1rem;
     font-size: 1rem;
   }
 
-  .register-form button {
+  .login-form button {
     padding: 1rem;
     font-size: 1.1rem;
   }
 
-  .register-form .form-group {
+  .form-group {
     margin-bottom: 1.25rem;
   }
 }
 
 /* Desktop styles */
 @media (min-width: 1024px) {
-  .register-page {
+  .login-page {
     padding: 3rem;
   }
 
-  .register-form {
+  .login-form {
     padding: 3rem;
     max-width: 500px;
   }
 
-  .register-form h1 {
+  .login-form h1 {
     font-size: 2rem;
     margin-bottom: 2.5rem;
   }
 
-  .register-form .form-group {
+  .form-group {
     margin-bottom: 1.5rem;
   }
 }
 
 /* Large desktop styles */
 @media (min-width: 1440px) {
-  .register-form {
+  .login-form {
     max-width: 550px;
     padding: 3.5rem;
   }
@@ -236,83 +234,94 @@
 
 /* Handle very small screens */
 @media (max-width: 480px) {
-  .register-page {
+  .login-page {
     padding: 0.5rem;
     align-items: flex-start;
     padding-top: 2rem;
   }
 
-  .register-form {
+  .login-form {
     padding: 1.25rem;
     border-radius: 8px;
   }
 
-  .register-form h1 {
+  .login-form h1 {
     font-size: 1.25rem;
     margin-bottom: 1.25rem;
   }
 
-  .register-form input {
+  .login-form input {
     padding: 0.625rem;
     font-size: 0.9rem;
   }
 
-  .register-form button {
+  .password-input-container input {
+    padding-left: 2.8rem !important;
+  }
+
+  .password-toggle {
+    left: 0.25rem;
+    font-size: 1.1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .login-form button {
     padding: 0.75rem;
     font-size: 0.9rem;
   }
 
-  .register-form .form-group {
+  .form-group {
     margin-bottom: 0.875rem;
   }
 }
 
 /* Landscape mobile devices */
 @media (max-height: 600px) and (orientation: landscape) {
-  .register-page {
+  .login-page {
     align-items: flex-start;
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
 
-  .register-form {
+  .login-form {
     margin: 0;
   }
 
-  .register-form h1 {
+  .login-form h1 {
     margin-bottom: 1rem;
     font-size: 1.25rem;
   }
 
-  .register-form .form-group {
+  .form-group {
     margin-bottom: 0.75rem;
   }
 }
 
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .register-form {
+  .login-form {
     border: 2px solid #000000;
   }
 }
 
 /* Additional black and white theme enhancements */
-.register-form input::placeholder {
+.login-form input::placeholder {
   color: #999999;
   font-style: italic;
 }
 
-.register-form input:hover {
+.login-form input:hover {
   border-color: #666666;
   background-color: #fafafa;
 }
 
 /* Alternating pattern for form groups */
-.register-form .form-group:nth-child(even) {
+.login-form .form-group:nth-child(even) {
   position: relative;
 }
 
-.register-form .form-group:nth-child(even)::before {
+.login-form .form-group:nth-child(even)::before {
   content: "";
   position: absolute;
   left: -1.5rem;
@@ -325,12 +334,12 @@
 }
 
 /* Focus states for accessibility */
-.register-form button:focus {
+.login-form button:focus {
   outline: 3px solid #666666;
   outline-offset: 2px;
 }
 
-.register-form input:focus {
+.login-form input:focus {
   position: relative;
   z-index: 1;
 }

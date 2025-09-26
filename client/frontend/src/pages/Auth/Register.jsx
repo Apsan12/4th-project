@@ -11,8 +11,14 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -77,7 +83,7 @@ const Register = () => {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               value={formData.password}
@@ -85,6 +91,18 @@ const Register = () => {
               placeholder="Enter your password"
               required
             />
+            <div className="show-password-container">
+              <input
+                type="checkbox"
+                id="showPassword"
+                checked={showPassword}
+                onChange={togglePasswordVisibility}
+                className="show-password-checkbox"
+              />
+              <label htmlFor="showPassword" className="show-password-label">
+                Show Password
+              </label>
+            </div>
           </div>
 
           <div className="form-group">
