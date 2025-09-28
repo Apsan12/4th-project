@@ -38,7 +38,7 @@ const Verify = () => {
 
       setTimeout(() => {
         navigate("/login");
-      }, 3000);// 3 sec ko tiime set hoo hai 
+      }, 3000); // 3 sec ko tiime set hoo hai
     } catch (error) {
       console.error("Email verification error:", error);
       setMessage(

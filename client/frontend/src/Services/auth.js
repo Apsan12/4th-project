@@ -27,12 +27,81 @@ export const verifyEmail = async (token) => {
   }
 };
 
+export const userProfile = async () => {
+  try {
+    const response = await api.get("/users/profile");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to fetch user profile" };
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post("/users/logout");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Logout failed" };
+  }
+};
+
 export const resendVerificationEmail = async (email) => {
-  // Note: There's no dedicated resend endpoint in the backend
-  // This is a placeholder - you may need to implement a resend endpoint
-  // or ask users to re-register if they didn't receive the email
-  throw {
-    message:
-      "Resend functionality not available. Please contact support or re-register.",
-  };
+  try {
+    const response = await api.post("/users/resend-verification", { email });
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || { message: "Failed to resend verification email" }
+    );
+  }
+};
+
+export const updateUserProfile = async (profileData) => {
+  try {
+    const response = await api.put("/users/profile", profileData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to update user profile" };
+  }
+};
+
+export const deleteUserAccount = async () => {
+  try {
+    const response = await api.delete("/users/delete");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to delete user account" };
+  }
+};
+
+export const changeUserPassword = async (passwordData) => {
+  try {
+    const response = await api.post("/users/change-password", passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to change user password" };
+  }
+};
+
+export const resetUserPassword = async (email) => {
+  try {
+    const response = await api.post("/users/password-reset", { email });
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || { message: "Failed to request password reset" }
+    );
+  }
+};
+
+export const confirmPasswordReset = async (token, newPassword) => {
+  try {
+    const response = await api.post("/users/reset-password", {
+      token,
+      newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to reset password" };
+  }
 };

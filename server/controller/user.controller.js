@@ -31,6 +31,7 @@ import { createUserSchema } from "../validation/user.validation.js";
 import { hashPassword } from "../services/user.service.js";
 import { clearAuthCookies, setAuthCookies } from "../config/cookie.js";
 import User from "../model/user.model.js";
+import { Op } from "sequelize";
 import crypto from "crypto";
 
 export const registerUserController = async (req, res) => {
@@ -219,7 +220,7 @@ export const requestPasswordReset = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 1000 * 60 * 15; // 15 min
     await user.save();
 
-    const resetLink = `http://localhost:3001/reset-password?token=${rawToken}`; // frontend page recommended
+    const resetLink = `http://localhost:5173/reset-password?token=${rawToken}`; // frontend page recommended
 
     await sendMail(
       user.email,
@@ -239,25 +240,47 @@ export const requestPasswordReset = async (req, res) => {
 // Reset password (with token)
 export const resetPassword = async (req, res) => {
   try {
-    const { email, newPassword } = req.body; // or get email from token payload
+    const { token, newPassword } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Reset token is required" });
+    }
 
     if (!newPassword) {
       return res.status(400).json({ message: "New password is required" });
     }
 
-    // Find user by email
-    const user = await findByEmail(email);
+    // Hash the provided token to compare with stored hash
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Find user with matching token that hasn't expired
+    const user = await User.findOne({
+      where: {
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { [Op.gt]: Date.now() },
+      },
+    });
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
     }
 
+    // Hash the new password
     const hashed = await hashPassword(newPassword);
 
-    await user.update({ where: { email } }, { password: hashed });
+    // Update password and clear reset token fields
+    await user.update({
+      password: hashed,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
 
-    res.json({ message: "Password updated successfully" });
+    res.json({ message: "Password reset successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Reset Password Error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

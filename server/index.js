@@ -13,14 +13,23 @@ config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Configure CORS to allow credentials
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"], // yo chai frontend ko URL ho
+    credentials: true, // Allow cookies and credentials 2 taii nai accept garxa
+
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
+);
 
 // Body parsing middleware
 app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 await connectDB();
 
@@ -30,7 +39,6 @@ console.log("Database models synchronized successfully");
 await createSuperAdmin();
 
 app.use(routes);
-
 
 // Root endpoint
 app.get("/", (req, res) => {
