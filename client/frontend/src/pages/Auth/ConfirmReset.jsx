@@ -50,7 +50,7 @@ const ConfirmReset = () => {
       setMessage("Password reset successfully! Redirecting to login...");
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      });
     } catch (error) {
       setMessage(error.message || "Failed to reset password");
     } finally {

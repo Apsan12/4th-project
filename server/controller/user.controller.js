@@ -54,7 +54,8 @@ export const registerUserController = async (req, res) => {
     const user = await createUser({ username, email, password, phoneNumber });
 
     const token = generateEmailVerificationToken(user.email);
-    const verificationLink = `http://localhost:5174/verify?token=${token}`;
+    const verificationLink =
+      `http://localhost:5173/verify?token=${token}`;
 
     await sendMail(
       user.email,

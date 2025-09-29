@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../Services/auth";
 import "./Login.css";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,6 +27,19 @@ const Login = () => {
       const response = await loginUser(formData);
       setMessage(response.message || "Login successful!");
       console.log("Login response:", response);
+
+      // Check for token in different possible locations
+      const token =
+        response.token || response.user?.accessToken || response.accessToken;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        console.log("Token saved, redirecting to dashboard...");
+        navigate("/dashboard");
+      } else {
+        console.log("No token found in response:", response);
+        setMessage("Login successful but no token received. Please try again.");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setMessage(error.message || "Login failed. Please try again.");
@@ -96,7 +111,6 @@ const Login = () => {
 
         <div className="register-link">
           Don&apos;t have an account? <a href="/register">Register here</a>
-      
         </div>
         <div className="forgot-password-link">
           <a href="/reset-password">Forgot Password?</a>

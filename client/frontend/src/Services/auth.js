@@ -29,7 +29,7 @@ export const verifyEmail = async (token) => {
 
 export const userProfile = async () => {
   try {
-    const response = await api.get("/users/profile");
+    const response = await api.get("/users/me");
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch user profile" };
@@ -71,6 +71,15 @@ export const deleteUserAccount = async () => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to delete user account" };
+  }
+};
+
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await api.post("/users/change-password", passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to change password" };
   }
 };
 
