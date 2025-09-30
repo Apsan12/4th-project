@@ -54,8 +54,7 @@ export const registerUserController = async (req, res) => {
     const user = await createUser({ username, email, password, phoneNumber });
 
     const token = generateEmailVerificationToken(user.email);
-    const verificationLink =
-      `http://localhost:5173/verify?token=${token}`;
+    const verificationLink = `http://localhost:5173/verify?token=${token}`;
 
     await sendMail(
       user.email,
@@ -187,14 +186,27 @@ export const userProfileController = async (req, res) => {
 };
 
 export const updateUserController = async (req, res) => {
-  const { id } = req.params;
-  const updateData = req.body;
-
   try {
-    const user = await updateUser(id, updateData);
-    res.json({ user });
+    const userId = req.user.id; // yeley chai auth bata nai id linxa
+    const updateData = req.body;
+
+    console.log("Updating user:", userId, "with data:", updateData);
+
+    const user = await updateUser(userId, updateData);
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+      },
+    });
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    console.error("Update User Error:", err);
+    res.status(400).json({ message: err.message });
   }
 };
 

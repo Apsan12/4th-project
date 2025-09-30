@@ -58,7 +58,7 @@ export const resendVerificationEmail = async (email) => {
 
 export const updateUserProfile = async (profileData) => {
   try {
-    const response = await api.put("/users/profile", profileData);
+    const response = await api.put("/users/update-user", profileData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to update user profile" };
