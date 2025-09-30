@@ -6,6 +6,7 @@ import {
   findById,
   getAllUsers,
   updateUser,
+  updateUserProfile,
   deleteUser,
   comparePassword,
   assignDriverRole,
@@ -36,39 +37,87 @@ import crypto from "crypto";
 
 export const registerUserController = async (req, res) => {
   try {
-    // Validate request
+    // Validate request body
     const result = createUserSchema.safeParse(req.body);
     if (!result.success) {
-      const errors = result.error.errors.map((err) => ({
-        field: err.path.join("."),
-        message: err.message,
-      }));
-      return res.status(400).json({ errors, message: "Validation failed" });
+      // Safe error handling - check if errors exist
+      const errors = result.error?.issues?.map((err) => ({
+        field: err.path?.join(".") || "unknown",
+        message: err.message || "Validation error",
+      })) || [{ field: "general", message: "Validation failed" }];
+
+      return res.status(400).json({
+        success: false,
+        errors,
+        message: "Validation failed",
+      });
     }
+
     const { username, email, password, phoneNumber } = result.data;
 
+    // Check if user already exists
     const existingUser = await findByEmail(email);
-    if (existingUser)
-      return res.status(409).json({ message: "Email already registered" });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
 
-    const user = await createUser({ username, email, password, phoneNumber });
+    // Prepare user data
+    const userData = {
+      username,
+      email,
+      password,
+      phoneNumber,
+    };
 
+    // Image URL is already handled by multer middleware
+    if (req.body.imageUrl) {
+      userData.imageUrl = req.body.imageUrl;
+      console.log("📸 Registration image URL:", req.body.imageUrl);
+    }
+
+    // Create user using service
+    const user = await createUser(userData);
+
+    // Generate verification token and link
     const token = generateEmailVerificationToken(user.email);
     const verificationLink = `http://localhost:5173/verify?token=${token}`;
 
+    // Send verification email
     await sendMail(
       user.email,
-      "Welcome !",
+      "Welcome to Bus Management System!",
       welcomeEmailTemplate(username, verificationLink)
     );
 
+    // Success response
     res.status(201).json({
-      message: "Verification email sent",
-      user,
+      success: true,
+      message:
+        "Registration successful! Please check your email for verification.",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        isVerified: user.isVerified,
+      },
     });
   } catch (err) {
     console.error("Register Error:", err);
-    res.status(500).json({ message: "Internal server error" });
+
+    // Return appropriate error message
+    const message = err.message || "Internal server error";
+    res.status(500).json({
+      success: false,
+      message: message.includes("already")
+        ? message
+        : "Registration failed. Please try again.",
+    });
   }
 };
 
@@ -176,7 +225,17 @@ export const userProfileController = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address,
+        emergencyContact: user.emergencyContact,
+        imageUrl: user.imageUrl,
         role: user.role,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     });
   } catch (err) {
@@ -187,26 +246,46 @@ export const userProfileController = async (req, res) => {
 
 export const updateUserController = async (req, res) => {
   try {
-    const userId = req.user.id; // yeley chai auth bata nai id linxa
+    const userId = req.user.id;
     const updateData = req.body;
 
-    console.log("Updating user:", userId, "with data:", updateData);
+    console.log("🔄 Updating user:", userId);
+    console.log("📝 Update data:", updateData);
 
-    const user = await updateUser(userId, updateData);
+    // Image URL is already handled by multer middleware
+    if (req.body.imageUrl) {
+      console.log("📸 Update image URL:", req.body.imageUrl);
+    }
+
+    // Update user in database
+    const user = await updateUserProfile(userId, updateData);
 
     res.status(200).json({
-      message: "User updated successfully",
+      success: true,
+      message: "User profile updated successfully",
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address,
+        emergencyContact: user.emergencyContact,
+        imageUrl: user.imageUrl,
         role: user.role,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     });
   } catch (err) {
     console.error("Update User Error:", err);
-    res.status(400).json({ message: err.message });
+    res.status(400).json({
+      success: false,
+      message: err.message || "Failed to update user profile",
+    });
   }
 };
 
@@ -502,15 +581,21 @@ export const getOwnProfileController = async (req, res) => {
     const user = await findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Return clean user profile data (exclude password)
+    // Return complete user profile data (exclude password)
     res.status(200).json({
       success: true,
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role,
         phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address,
+        emergencyContact: user.emergencyContact,
+        imageUrl: user.imageUrl,
+        role: user.role,
         isVerified: user.isVerified,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,

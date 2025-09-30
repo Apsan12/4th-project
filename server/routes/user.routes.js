@@ -24,16 +24,22 @@ import {
 
 import authenticated from "../middleware/auth.js";
 import authorization from "../middleware/authorize.js";
+import { uploadUserImage } from "../config/multer.js";
 
 const userRoute = Router();
 
-userRoute.post("/register", registerUserController);
+userRoute.post("/register", uploadUserImage, registerUserController);
 userRoute.get("/verify-email", verifyEmailController);
 userRoute.post("/login", loginUserController);
 userRoute.post("/refresh-token", refreshTokenController);
 userRoute.post("/logout", authenticated, logoutUserController);
 userRoute.get("/me", authenticated, getOwnProfileController);
-userRoute.put("/update-user", authenticated, updateUserController);
+userRoute.put(
+  "/update-user",
+  authenticated,
+  uploadUserImage,
+  updateUserController
+);
 userRoute.post("/password-reset", requestPasswordReset);
 userRoute.post("/reset-password", resetPassword);
 

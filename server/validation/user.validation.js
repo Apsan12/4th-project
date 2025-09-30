@@ -7,9 +7,19 @@ export const createUserSchema = z.object({
   role: z.enum(["user", "admin", "busDriver"]).optional(),
   isVerified: z.boolean().optional(),
   phoneNumber: z.string().optional(),
+  imageUrl: z.string().url().max(255).optional(),
 });
 
-// Assign user to bus driver role validation
+// Update user validation schema (for profile updates)
+export const updateUserSchema = z
+  .object({
+    username: z.string().min(3).max(50).optional(),
+    phoneNumber: z.string().optional(),
+    imageUrl: z.string().url().max(255).optional(),
+  })
+  .strict();
+
+// Assign user to bus driver role validation schema bata default hatara nai garcha hai
 export const assignDriverRoleSchema = z.object({
   userId: z.number().int().positive("User ID must be a positive integer"),
   licenseNumber: z
@@ -35,8 +45,5 @@ export const updateUserRoleSchema = z.object({
       message: "Role must be one of: user, admin, busDriver",
     }),
   }),
-  reason: z
-    .string()
-    .max(20, "Reason must be at most 20 characters")
-    .optional(),
+  reason: z.string().max(20, "Reason must be at most 20 characters").optional(),
 });

@@ -38,6 +38,10 @@ Bus.init(
       primaryKey: true,
       autoIncrement: true,
     },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     busNumber: {
       type: DataTypes.STRING,
       allowNull: false,

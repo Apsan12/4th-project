@@ -23,7 +23,12 @@ const UserProfile = () => {
     dateOfBirth: "",
     address: "",
     emergencyContact: "",
+    imageUrl: "",
   });
+
+  // File upload state
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Password change data
   const [passwordData, setPasswordData] = useState({
@@ -46,6 +51,12 @@ const UserProfile = () => {
     try {
       setLoading(true);
       const response = await userProfile();
+      // console.log("User profile response:", response); // Debug log
+      // console.log("User imageUrl:", response.user?.imageUrl); // Debug log
+      // console.log(
+      //   "Complete user object:",
+      //   JSON.stringify(response.user, null, 2)
+      // ); // Debug log
       setUser(response.user);
       setProfileData({
         username: response.user.username || "",
@@ -56,6 +67,7 @@ const UserProfile = () => {
         dateOfBirth: response.user.dateOfBirth || "",
         address: response.user.address || "",
         emergencyContact: response.user.emergencyContact || "",
+        imageUrl: response.user.imageUrl || "",
       });
     } catch (error) {
       setMessage(error.message || "Failed to fetch profile");
@@ -71,6 +83,23 @@ const UserProfile = () => {
     });
   };
 
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+
+    if (file) {
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   const handlePasswordChange = (e) => {
     setPasswordData({
       ...passwordData,
@@ -82,11 +111,72 @@ const UserProfile = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await updateUserProfile(profileData);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+
+      // Add all profile data to FormData (exclude imageUrl if uploading file)
+      Object.keys(profileData).forEach((key) => {
+        // Skip imageUrl if we're uploading a file (let Cloudinary handle it)
+        if (key === "imageUrl" && selectedFile) {
+          console.log(
+            "⏭️ Skipping imageUrl field because file is being uploaded"
+          );
+          return;
+        }
+
+        if (profileData[key]) {
+          formData.append(key, profileData[key]);
+        }
+      });
+
+      // Add the file if one is selected
+      if (selectedFile) {
+        console.log("📎 Uploading file:", {
+          name: selectedFile.name,
+          size: selectedFile.size,
+          type: selectedFile.type,
+        });
+        formData.append("userImage", selectedFile);
+      } else {
+        console.log("⚠️ No file selected for upload");
+      }
+
+      // Debug: Log FormData contents
+      console.log("📋 FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+
+      console.log("🚀 Submitting form data...");
+      const response = await updateUserProfile(formData);
+      console.log("Update response:", response); // Debug log
+
+      // Update user state immediately with response data
+      if (response.user) {
+        setUser(response.user);
+        setProfileData({
+          username: response.user.username || "",
+          email: response.user.email || "",
+          phoneNumber: response.user.phoneNumber || "",
+          firstName: response.user.firstName || "",
+          lastName: response.user.lastName || "",
+          dateOfBirth: response.user.dateOfBirth || "",
+          address: response.user.address || "",
+          emergencyContact: response.user.emergencyContact || "",
+          imageUrl: response.user.imageUrl || "",
+        });
+      }
+
       setMessage("Profile updated successfully!");
       setIsEditing(false);
+      setSelectedFile(null);
+      setImagePreview(null);
+
+      // Also fetch fresh data to ensure consistency
       fetchUserProfile();
     } catch (error) {
+      console.error("Profile update error:", error); // Debug log
       setMessage(error.message || "Failed to update profile");
     } finally {
       setLoading(false);
@@ -150,7 +240,44 @@ const UserProfile = () => {
         <div className="profile-header">
           <div className="profile-avatar">
             <div className="avatar-circle">
-              {user?.username?.charAt(0).toUpperCase() || "👤"}
+              {user?.imageUrl ? (
+                <img
+                  src={`${user.imageUrl}?t=${Date.now()}`}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                  onError={(e) => {
+                    console.log("❌ Image failed to load:", user.imageUrl);
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                  onLoad={() => {
+                    console.log("✅ Image loaded successfully:", user.imageUrl);
+                  }}
+                />
+              ) : null}
+              {!user?.imageUrl && (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    borderRadius: "50%",
+                  }}
+                >
+                  {user?.username?.charAt(0).toUpperCase() || "👤"}
+                </div>
+              )}
             </div>
           </div>
           <div className="profile-info">
@@ -160,6 +287,10 @@ const UserProfile = () => {
                 : user?.username || "User"}
             </h1>
             <p className="profile-email">{user?.email}</p>
+            {/* Debug info - remove this after testing */}
+            {/* <p style={{ fontSize: "12px", color: "#666" }}>
+              Debug: imageUrl = {user?.imageUrl || "null"}
+            </p> */}
             <p className="profile-status">
               <span
                 className={`status-badge ${
@@ -196,7 +327,6 @@ const UserProfile = () => {
 
         {/* Tab Content */}
         <div className="profile-content">
-          {/* Profile Details Tab */}
           {activeTab === "profile" && (
             <div className="tab-content">
               <div className="content-header">
@@ -309,6 +439,49 @@ const UserProfile = () => {
                       placeholder="Name and phone number"
                     />
                   </div>
+                </div>
+                <div className="form-group full-width">
+                  <label htmlFor="profileImage">Profile Image</label>
+
+                  {/* Current/Preview Image */}
+                  {(imagePreview || profileData.imageUrl) && (
+                    <div className="image-preview">
+                      <img
+                        src={imagePreview || profileData.imageUrl}
+                        alt="Profile preview"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "50%",
+                          marginBottom: "10px",
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* File Upload Input */}
+                  {isEditing && (
+                    <input
+                      type="file"
+                      id="profileImage"
+                      name="profileImage"
+                      onChange={handleFileChange}
+                      accept="image/*"
+                      style={{ marginBottom: "10px" }}
+                    />
+                  )}
+
+                  {/* URL Input as fallback */}
+                  <input
+                    type="text"
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={profileData.imageUrl}
+                    onChange={handleProfileChange}
+                    disabled={!isEditing}
+                    placeholder="Or enter image URL"
+                  />
                 </div>
 
                 {isEditing && (

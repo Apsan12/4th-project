@@ -19,7 +19,8 @@ export const findById = async (id) => {
 };
 
 export const createUser = async (userData) => {
-  const { username, email, password, role, isVerified, phoneNumber } = userData;
+  const { username, email, password, role, isVerified, phoneNumber, imageUrl } =
+    userData;
 
   const existingUser = await findByEmail(email);
   if (existingUser) {
@@ -34,6 +35,7 @@ export const createUser = async (userData) => {
     password: hashedPassword,
     role: role || "user",
     phoneNumber,
+    imageUrl,
     isVerified: isVerified || false,
   });
 
@@ -58,6 +60,23 @@ export const updateUser = async (id, updateData) => {
   }
 
   await user.update(updateData);
+  return user;
+};
+
+// Update user profile with image
+export const updateUserProfile = async (id, updateData) => {
+  const user = await findById(id);
+  if (!user) throw new Error("User not found");
+
+  // Remove empty imageUrl from updateData to preserve existing image
+  if (updateData.imageUrl === "") {
+    delete updateData.imageUrl;
+  }
+
+  console.log("💾 Updating user with data:", updateData);
+  await user.update(updateData);
+
+  console.log("✅ User updated successfully. Final imageUrl:", user.imageUrl);
   return user;
 };
 

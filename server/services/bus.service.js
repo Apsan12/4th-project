@@ -2,8 +2,6 @@ import Bus from "../model/bus.model.js";
 import Route from "../model/route.model.js";
 import User from "../model/user.model.js";
 
-// ------------------ Bus CRUD Operations ------------------
-
 // Create a new bus
 export const createBus = async (busData) => {
   const {
@@ -16,7 +14,8 @@ export const createBus = async (busData) => {
     isActive,
     amenities,
     description,
-    licensePlate
+    licensePlate,
+    imageUrl,
   } = busData;
 
   // Check if bus number already exists
@@ -62,7 +61,7 @@ export const createBus = async (busData) => {
     amenities: amenities || [],
     description: description?.trim(),
     licensePlate: licensePlate ? licensePlate.toUpperCase() : null,
-    amenities: amenities || [],
+    imageUrl,
   });
 
   return bus;
@@ -203,6 +202,51 @@ export const updateBus = async (id, updateData) => {
 
   await bus.update(updateData);
   return bus;
+};
+
+// Update bus with image
+export const updateBusWithImage = async (id, updateData, imageFile = null) => {
+  const bus = await Bus.findByPk(id);
+  if (!bus) {
+    throw new Error("Bus not found");
+  }
+
+  // If new image file is provided, handle image replacement
+  if (imageFile) {
+    // Delete old image from Cloudinary if it exists
+    if (bus.imageUrl) {
+      try {
+        // Extract public_id from Cloudinary URL
+        const urlParts = bus.imageUrl.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = `bus-management/buses/${filename.split(".")[0]}`;
+
+        // Delete old image from Cloudinary
+        const { v2: cloudinary } = await import("cloudinary");
+        await cloudinary.uploader.destroy(publicId);
+        console.log(`Deleted old bus image: ${publicId}`);
+      } catch (error) {
+        console.error("Error deleting old bus image:", error);
+        // Don't throw error here, continue with update
+      }
+    }
+
+    // Set new image URL
+    updateData.imageUrl = imageFile.path; // Cloudinary provides the full URL in file.path
+  }
+
+  // Use the existing updateBus logic for validation
+  return await updateBus(id, updateData);
+};
+
+// Create bus with image
+export const createBusWithImage = async (busData, imageFile = null) => {
+  // If image file is provided, add the Cloudinary URL to bus data
+  if (imageFile) {
+    busData.imageUrl = imageFile.path; // Cloudinary provides the full URL in file.path
+  }
+
+  return await createBus(busData);
 };
 
 // Delete bus (soft delete by setting isActive to false)

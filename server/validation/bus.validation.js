@@ -62,6 +62,7 @@ export const createBusSchema = z.object({
     .string()
     .max(500, "Description must be at most 500 characters")
     .optional(),
+  imageUrl: z.string().url().max(255).optional(),
 });
 
 export const updateBusSchema = z
@@ -160,6 +161,7 @@ export const updateBusSchema = z
       .string()
       .max(500, "Description must be at most 500 characters")
       .optional(),
+    imageUrl: z.string().url().max(255).optional(),
   })
   .refine(
     (data) => Object.keys(data).length > 0,

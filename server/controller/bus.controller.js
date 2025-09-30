@@ -1,8 +1,10 @@
 import {
   createBus,
+  createBusWithImage,
   getAllBuses,
   getBusById,
   updateBus,
+  updateBusWithImage,
   deleteBus,
   permanentDeleteBus,
   assignBusToRoute,
@@ -33,14 +35,25 @@ export const createBusController = async (req, res) => {
     // Validate request body
     const result = createBusSchema.safeParse(req.body);
     if (!result.success) {
-      const errors = result.error.errors.map((err) => ({
-        field: err.path.join("."),
+      // Fixed validation error handling - check for issues instead of errors
+      const errors = result.error?.issues?.map((err) => ({
+        field: err.path?.join(".") || "unknown",
         message: err.message,
-      }));
+      })) || [{ field: "validation", message: "Validation failed" }];
       return res.status(400).json({ errors, message: "Validation failed" });
     }
 
-    const bus = await createBus(result.data);
+    // Check if image file is uploaded
+    const imageFile = req.file;
+    let bus;
+
+    if (imageFile) {
+      // Use createBusWithImage service for proper encapsulation
+      bus = await createBusWithImage(result.data, imageFile);
+    } else {
+      // Use regular createBus service
+      bus = await createBus(result.data);
+    }
 
     res.status(201).json({
       success: true,
@@ -65,10 +78,11 @@ export const getAllBusesController = async (req, res) => {
     // Validate query parameters
     const queryResult = busQuerySchema.safeParse(req.query);
     if (!queryResult.success) {
-      const errors = queryResult.error.errors.map((err) => ({
-        field: err.path.join("."),
+      // Fixed validation error handling - check for issues instead of errors
+      const errors = queryResult.error?.issues?.map((err) => ({
+        field: err.path?.join(".") || "unknown",
         message: err.message,
-      }));
+      })) || [{ field: "validation", message: "Invalid query parameters" }];
       return res
         .status(400)
         .json({ errors, message: "Invalid query parameters" });
@@ -139,14 +153,29 @@ export const updateBusController = async (req, res) => {
     // Validate request body
     const bodyResult = updateBusSchema.safeParse(req.body);
     if (!bodyResult.success) {
-      const errors = bodyResult.error.errors.map((err) => ({
-        field: err.path.join("."),
+      // Fixed validation error handling - check for issues instead of errors
+      const errors = bodyResult.error?.issues?.map((err) => ({
+        field: err.path?.join(".") || "unknown",
         message: err.message,
-      }));
+      })) || [{ field: "validation", message: "Validation failed" }];
       return res.status(400).json({ errors, message: "Validation failed" });
     }
 
-    const bus = await updateBus(idResult.data.id, bodyResult.data);
+    // Check if image file is uploaded
+    const imageFile = req.file;
+    let bus;
+
+    if (imageFile) {
+      // Use updateBusWithImage service for proper encapsulation
+      bus = await updateBusWithImage(
+        idResult.data.id,
+        bodyResult.data,
+        imageFile
+      );
+    } else {
+      // Use regular updateBus service
+      bus = await updateBus(idResult.data.id, bodyResult.data);
+    }
 
     res.status(200).json({
       success: true,

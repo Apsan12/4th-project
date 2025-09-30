@@ -19,16 +19,17 @@ import {
 } from "../controller/bus.controller.js";
 import authenticated from "../middleware/auth.js";
 import authorization from "../middleware/authorize.js";
+import { uploadBusImage } from "../config/multer.js";
 
 const router = express.Router();
 
-// ------------------ Public Routes ------------------
+// ------------------ Public Routes tara login hunu parxa still to updated ------------------
 
 // View available buses (public access for customers)
 router.get("/available", getAvailableBusesController);
 router.get("/route/:routeId", getBusesByRouteController);
 
-// ------------------ Protected Routes (Authentication Required) ------------------
+//  Protected Routes (Authentication Required) login hunu parya bhanya haii raja  ------------------
 
 // Basic bus operations
 router.get("/", authenticated, getAllBusesController);
@@ -41,8 +42,20 @@ router.get("/driver/:driverId", authenticated, getBusesByDriverController);
 // ------------------ Admin Only Routes ------------------
 
 // Bus management (admin only)
-router.post("/", authenticated, authorization("admin"), createBusController);
-router.put("/:id", authenticated, authorization("admin"), updateBusController);
+router.post(
+  "/",
+  authenticated,
+  authorization("admin"),
+  uploadBusImage,
+  createBusController
+);
+router.put(
+  "/:id",
+  authenticated,
+  authorization("admin"),
+  uploadBusImage,
+  updateBusController
+);
 router.delete(
   "/:id",
   authenticated,

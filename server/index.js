@@ -31,6 +31,9 @@ app.use(cookieParser());
 
 app.use(morgan("dev"));
 
+// Serve static files (for uploaded images)
+app.use("/uploads", express.static("uploads"));
+
 await connectDB();
 
 await sequelize.sync({ alter: false });
