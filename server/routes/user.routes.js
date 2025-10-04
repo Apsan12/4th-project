@@ -28,7 +28,7 @@ import { uploadUserImage } from "../config/multer.js";
 
 const userRoute = Router();
 
-userRoute.post("/register", uploadUserImage, registerUserController);
+userRoute.post("/register", registerUserController);
 userRoute.get("/verify-email", verifyEmailController);
 userRoute.post("/login", loginUserController);
 userRoute.post("/refresh-token", refreshTokenController);

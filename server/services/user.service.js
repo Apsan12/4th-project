@@ -68,13 +68,31 @@ export const updateUserProfile = async (id, updateData) => {
   const user = await findById(id);
   if (!user) throw new Error("User not found");
 
-  // Remove empty imageUrl from updateData to preserve existing image
-  if (updateData.imageUrl === "") {
+  // Remove empty/null/undefined imageUrl from updateData to preserve existing image
+  if (!updateData.imageUrl || updateData.imageUrl === "") {
     delete updateData.imageUrl;
+  }
+
+  // Remove userImage field if it's empty object (comes from frontend)
+  if (
+    updateData.userImage &&
+    typeof updateData.userImage === "object" &&
+    Object.keys(updateData.userImage).length === 0
+  ) {
+    delete updateData.userImage;
+  }
+
+  // Remove email from updateData to prevent email updates
+  if (updateData.email) {
+    delete updateData.email;
+    console.log("⚠️ Email update blocked - emails cannot be changed");
   }
 
   console.log("💾 Updating user with data:", updateData);
   await user.update(updateData);
+
+  // Reload the user to get fresh data from database
+  await user.reload();
 
   console.log("✅ User updated successfully. Final imageUrl:", user.imageUrl);
   return user;

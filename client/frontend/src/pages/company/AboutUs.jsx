@@ -46,7 +46,7 @@ const AboutUs = () => {
                 <p>
                   To provide exceptional transportation services that prioritize
                   safety, reliability, and customer satisfaction while
-                  contributing to sustainable urban mobility solutions.
+                  contributing to sustainable urban mobility solutions made by Dipendra Batta.
                 </p>
               </div>
               <div className="vision">

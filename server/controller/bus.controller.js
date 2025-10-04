@@ -161,21 +161,19 @@ export const updateBusController = async (req, res) => {
       return res.status(400).json({ errors, message: "Validation failed" });
     }
 
-    // Check if image file is uploaded
-    const imageFile = req.file;
-    let bus;
+    const busId = idResult.data.id;
+    const updateData = bodyResult.data;
 
-    if (imageFile) {
-      // Use updateBusWithImage service for proper encapsulation
-      bus = await updateBusWithImage(
-        idResult.data.id,
-        bodyResult.data,
-        imageFile
-      );
-    } else {
-      // Use regular updateBus service
-      bus = await updateBus(idResult.data.id, bodyResult.data);
+    console.log("🔄 Updating bus:", busId);
+    console.log("📝 Update data:", updateData);
+
+    // Image URL is already handled by multer middleware
+    if (req.body.imageUrl) {
+      console.log("📸 Update image URL:", req.body.imageUrl);
     }
+
+    // Update bus in database
+    const bus = await updateBus(busId, updateData);
 
     res.status(200).json({
       success: true,

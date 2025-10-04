@@ -48,17 +48,32 @@ const upload = multer({
 
 // Combined middleware that handles upload AND Cloudinary
 export const uploadUserImage = [
+  (req, res, next) => {
+    console.log("🟢 MIDDLEWARE STEP 1: Before multer");
+    next();
+  },
   upload.single("userImage"),
   async (req, res, next) => {
+    console.log("� MIDDLEWARE STEP 2: Multer middleware running...");
+    console.log("📁 File received:", req.file ? "YES" : "NO");
+    console.log("📋 Body before processing:", req.body);
+
     if (req.file) {
       try {
         console.log("🚀 Uploading user image to Cloudinary...");
+        console.log("📄 File details:", {
+          originalname: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
+        });
+
         const imageUrl = await uploadToCloudinary(
           req.file,
           "bus-management/users"
         );
         req.body.imageUrl = imageUrl;
         console.log("✅ Image uploaded:", imageUrl);
+        console.log("📋 Body after processing:", req.body);
       } catch (error) {
         console.error("❌ Upload failed:", error);
         return res.status(500).json({
@@ -66,6 +81,8 @@ export const uploadUserImage = [
           message: "Image upload failed",
         });
       }
+    } else {
+      console.log("ℹ️ No file uploaded, skipping Cloudinary upload");
     }
     next();
   },
