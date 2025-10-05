@@ -43,7 +43,7 @@ export default function AppRoutes() {
 
       <Route
         path="*"
-        element={<h1 className="text-center">404 - Page Not Found</h1>}
+        element={<h1 style={{ textAlign: "center", backgroundColor: "lightgray"  ,color: "darkred" }}>404 - Page Not Found</h1>}
       />
     </Routes>
   );
