@@ -34,6 +34,7 @@ userRoute.post("/login", loginUserController);
 userRoute.post("/refresh-token", refreshTokenController);
 userRoute.post("/logout", authenticated, logoutUserController);
 userRoute.get("/me", authenticated, getOwnProfileController);
+userRoute.post("/update-password", authenticated, updateUserController);
 userRoute.put(
   "/update-user",
   authenticated,

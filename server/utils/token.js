@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 config();
 
 // Access token (short-lived)
-export const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+export const generateToken = (id, expiresIn = "1h") => {
+  return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn });
 };
 
 export const verifyToken = (token) => {

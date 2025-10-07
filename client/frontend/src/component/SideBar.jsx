@@ -59,7 +59,7 @@ const SideBar = () => {
       description: "Updates & Alerts",
     },
     {
-      path: "/help",
+      path: "/help-support",
       icon: "❓",
       label: "Help & Support",
       description: "Get Assistance",

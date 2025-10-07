@@ -32,8 +32,6 @@ import { createUserSchema } from "../validation/user.validation.js";
 import { hashPassword } from "../services/user.service.js";
 import { clearAuthCookies, setAuthCookies } from "../config/cookie.js";
 import User from "../model/user.model.js";
-import { Op } from "sequelize";
-import crypto from "crypto";
 
 export const registerUserController = async (req, res) => {
   try {
@@ -302,17 +300,10 @@ export const requestPasswordReset = async (req, res) => {
         .status(200)
         .json({ message: "If the email exists, a reset link was sent" });
 
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(rawToken)
-      .digest("hex");
+    // Create a JWT token with user ID and expiry (15 minutes)
+    const resetToken = generateToken(user.id, "15m");
 
-    user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpires = Date.now() + 1000 * 60 * 15; // 15 min
-    await user.save();
-
-    const resetLink = `http://localhost:5173/reset-password?token=${rawToken}`; // frontend page recommended
+    const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
 
     await sendMail(
       user.email,
@@ -322,7 +313,7 @@ export const requestPasswordReset = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "a reset link was sent to your email address" });
+      .json({ message: "A reset link was sent to your email address" });
   } catch (error) {
     console.error("Error requesting password reset:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -333,6 +324,7 @@ export const requestPasswordReset = async (req, res) => {
 export const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
+    console.log(newPassword);
 
     if (!token) {
       return res.status(400).json({ message: "Reset token is required" });
@@ -342,43 +334,43 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "New password is required" });
     }
 
-    // Hash the provided token to compare with stored hash
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
-    // Find user with matching token that hasn't expired
-    const user = await User.findOne({
-      where: {
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { [Op.gt]: Date.now() },
-      },
-    });
-
-    if (!user) {
+    // Verify the JWT token
+    const decoded = verifyToken(token);
+    if (!decoded) {
       return res
         .status(400)
         .json({ message: "Invalid or expired reset token" });
     }
 
-    // Hash the new password
-    const hashed = await hashPassword(newPassword);
+    // Find the user by ID from token
+    const user = await findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    // Update password and clear reset token fields
-    await user.update({
-      password: hashed,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
-    });
+    // Hash the new password
+    const hashedPassword = await hashPassword(newPassword);
+    // console.log("✅ Hashed password:", hashedPassword.substring(0, 20) + "..."); chheck gary real string ma 
+
+    // Update user's password directly without double hashing
+    await user.update({ password: hashedPassword });
+    // console.log("✅ Password updated successfully"); dimag kharab yrr 
 
     res.json({ message: "Password reset successfully" });
   } catch (error) {
     console.error("Reset Password Error:", error);
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset token" });
+    }
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Update basic profile fields
-
-// Change password (authenticated)
 export const updatePassword = async (req, res) => {
   const userId = req.user.id; // assuming user ID is available from auth middleware
   const { oldPassword, newPassword } = req.body;

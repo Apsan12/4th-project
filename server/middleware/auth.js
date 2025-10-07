@@ -25,7 +25,7 @@ const authenticated = async (req, res, next) => {
     if (!payload?.id) {
       return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
     }
-    console.log("Decoded token payload:", payload);
+    // console.log("Decoded token payload:", payload);
     // 5️⃣ Find user
     const user = await User.findByPk(payload.id, {
       attributes: ["id", "role", "email", "username", "isVerified"],

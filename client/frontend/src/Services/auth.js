@@ -76,7 +76,7 @@ export const deleteUserAccount = async () => {
 
 export const changePassword = async (passwordData) => {
   try {
-    const response = await api.post("/users/change-password", passwordData);
+    const response = await api.post("/users/update-password", passwordData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to change password" };

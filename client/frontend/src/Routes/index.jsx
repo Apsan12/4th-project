@@ -11,6 +11,7 @@ import AboutUs from "../pages/company/AboutUs";
 import ContactUs from "../pages/company/ContactUs";
 import GetRute from "../pages/Rute/GetRute";
 import ProtectedRoute from "../component/ProtectedRoute";
+import HelpAndSupport from "../pages/HelpAnSupport";
 
 export default function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ export default function AppRoutes() {
       <Route path="/verify" element={<Verify />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/contact" element={<ContactUs />} />
+      <Route path="/help-support" element={<HelpAndSupport />}></Route>
 
       <Route
         path="/dashboard"
