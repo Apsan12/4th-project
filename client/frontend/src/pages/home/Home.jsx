@@ -11,7 +11,7 @@ export default function Home() {
         </div>
         <div className="navbar-buttons">
           <Link to="/login" className="navbar-button">
-            Sign In
+            Login
           </Link>
           <Link to="/register" className="navbar-button sign-up">
             Sign Up

@@ -16,7 +16,7 @@ const Footer = () => {
             with excellence and care.
           </p>
           <div className="social-links">
-            <a href="#" className="social-link" aria-label="Facebook">
+            <a href="https://www.facebook.com/profile.php?id=61581515226737" className="social-link" aria-label="Facebook">
               📘
             </a>
             <a href="#" className="social-link" aria-label="Twitter">
@@ -37,7 +37,7 @@ const Footer = () => {
           <div className="contact-info">
             <div className="contact-item">
               <span className="contact-icon">📍</span>
-              <span>123 Transport Street, City, State 12345</span>
+              <span>123 Transport Street, City, </span>
             </div>
             <div className="contact-item">
               <span className="contact-icon">📞</span>

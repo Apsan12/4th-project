@@ -70,8 +70,7 @@ const ContactUs = () => {
                   <div className="method-icon">📍</div>
                   <div className="method-details">
                     <h3>Visit Us</h3>
-                    <p>123 Transport Street</p>
-                    <p>City Center, State 12345</p>
+                    <p>Kathmandu, Nepal</p>
                     <p>United States</p>
                   </div>
                 </div>
@@ -81,13 +80,13 @@ const ContactUs = () => {
                   <div className="method-details">
                     <h3>Call Us</h3>
                     <p>
-                      <strong>Main:</strong> +1 (555) 123-4567
+                      <strong>Main:</strong> +977 981-6653664
                     </p>
                     <p>
-                      <strong>Support:</strong> +1 (555) 987-6543
+                      <strong>Support:</strong> +977 986-6108306
                     </p>
                     <p>
-                      <strong>Emergency:</strong> +1 (555) 911-0000
+                      <strong>Emergency:</strong> +977 976-2861032
                     </p>
                   </div>
                 </div>
@@ -97,13 +96,13 @@ const ContactUs = () => {
                   <div className="method-details">
                     <h3>Email Us</h3>
                     <p>
-                      <strong>General:</strong> info@busmanagement.com
+                      <strong>General:</strong> attenhng9703gmail.com
                     </p>
                     <p>
-                      <strong>Support:</strong> support@busmanagement.com
+                      <strong>Support:</strong> bhattadipendra27gmail.com
                     </p>
                     <p>
-                      <strong>Bookings:</strong> bookings@busmanagement.com
+                      <strong>Bookings:</strong> apsanneupane123gmail.com
                     </p>
                   </div>
                 </div>
@@ -112,18 +111,7 @@ const ContactUs = () => {
                   <div className="method-icon">🕒</div>
                   <div className="method-details">
                     <h3>Business Hours</h3>
-                    <p>
-                      <strong>Mon - Fri:</strong> 6:00 AM - 10:00 PM
-                    </p>
-                    <p>
-                      <strong>Saturday:</strong> 7:00 AM - 9:00 PM
-                    </p>
-                    <p>
-                      <strong>Sunday:</strong> 8:00 AM - 8:00 PM
-                    </p>
-                    <p>
-                      <strong>Emergency:</strong> 24/7 Available
-                    </p>
+                    <p>24/7 Open</p>
                   </div>
                 </div>
               </div>
@@ -276,7 +264,7 @@ const ContactUs = () => {
             <div className="emergency-content">
               <h2>Emergency Contact</h2>
               <p>For any emergencies or urgent assistance while traveling:</p>
-              <div className="emergency-number">📞 +1 (555) 911-0000</div>
+              <div className="emergency-number">📞 +977</div>
               <p>Available 24/7 for passenger safety and support</p>
             </div>
           </section>

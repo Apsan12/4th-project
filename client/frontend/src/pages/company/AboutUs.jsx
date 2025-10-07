@@ -125,7 +125,7 @@ const AboutUs = () => {
             <div className="team-grid">
               <div className="team-member">
                 <div className="member-photo">👨‍💼</div>
-                <h4>John Smith</h4>
+                <h4>Apsan Neupane</h4>
                 <p className="member-role">Chief Executive Officer</p>
                 <p className="member-bio">
                   With over 15 years in transportation management, John leads
@@ -134,22 +134,14 @@ const AboutUs = () => {
               </div>
               <div className="team-member">
                 <div className="member-photo">👩‍💼</div>
-                <h4>Sarah Johnson</h4>
+                <h4>Dipendra Bhatta</h4>
                 <p className="member-role">Operations Director</p>
                 <p className="member-bio">
-                  Sarah oversees daily operations and ensures our high standards
+                  Dipendra oversees daily operations and ensures our high standards
                   of service delivery across all routes.
                 </p>
               </div>
-              <div className="team-member">
-                <div className="member-photo">👨‍🔧</div>
-                <h4>Mike Wilson</h4>
-                <p className="member-role">Safety Manager</p>
-                <p className="member-bio">
-                  Mike is responsible for maintaining our fleet and implementing
-                  safety protocols to protect our passengers.
-                </p>
-              </div>
+              
             </div>
           </section>
 

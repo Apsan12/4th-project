@@ -477,3 +477,15 @@
 .link-button:hover {
   color: #333333;
 }
+.forgot-password-link {
+  font-weight: bold;
+  margin: 1px;
+  padding: 5%;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  button::hover{
+    color:#000000;
+    background-color: white;
+  }
+}
