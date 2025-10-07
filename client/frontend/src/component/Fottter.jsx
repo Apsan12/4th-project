@@ -41,11 +41,11 @@ const Footer = () => {
             </div>
             <div className="contact-item">
               <span className="contact-icon">📞</span>
-              <span>+1 (555) 123-4567</span>
+              <span>980000000</span>
             </div>
             <div className="contact-item">
               <span className="contact-icon">✉️</span>
-              <span>info@busmanagement.com</span>
+              <span>gobus543@gmail.com</span>
             </div>
             <div className="contact-item">
               <span className="contact-icon">🕒</span>
@@ -58,7 +58,7 @@ const Footer = () => {
         <div className="footer-section">
           <h4 className="footer-subtitle">About Us</h4>
           <p className="footer-text">
-            Established in 2020, we provide reliable transportation solutions
+            Established in 2025, we provide reliable transportation solutions
             with a focus on safety, comfort, and punctuality. Our modern fleet
             serves thousands of passengers daily.
           </p>

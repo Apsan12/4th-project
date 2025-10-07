@@ -193,6 +193,20 @@ export const updateBus = async (id, updateData) => {
     }
   }
 
+  // Remove empty/null/undefined imageUrl from updateData to preserve existing image
+  if (!updateData.imageUrl || updateData.imageUrl === "") {
+    delete updateData.imageUrl;
+  }
+
+  // Remove busImage field if it's empty object (comes from frontend)
+  if (
+    updateData.busImage &&
+    typeof updateData.busImage === "object" &&
+    Object.keys(updateData.busImage).length === 0
+  ) {
+    delete updateData.busImage;
+  }
+
   // Trim string fields
   if (updateData.model) updateData.model = updateData.model.trim();
   if (updateData.manufacturer)
@@ -200,7 +214,13 @@ export const updateBus = async (id, updateData) => {
   if (updateData.description)
     updateData.description = updateData.description.trim();
 
+  console.log("💾 Updating bus with data:", updateData);
   await bus.update(updateData);
+
+  // Reload the bus to get fresh data from database
+  await bus.reload();
+
+  console.log("✅ Bus updated successfully. Final imageUrl:", bus.imageUrl);
   return bus;
 };
 
