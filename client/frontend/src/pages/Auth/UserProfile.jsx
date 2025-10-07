@@ -143,12 +143,12 @@ const UserProfile = () => {
       }
 
       // Debug: Log FormData contents
-      console.log("📋 FormData contents:");
+      // console.log("📋 FormData contents:");
       for (let [key, value] of formData.entries()) {
         console.log(`  ${key}:`, value);
       }
 
-      console.log("🚀 Submitting form data...");
+      // console.log("🚀 Submitting form data...");
       const response = await updateUserProfile(formData);
       console.log("Update response:", response); // Debug log
 

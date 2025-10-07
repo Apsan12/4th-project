@@ -9,6 +9,7 @@ import Dashboard from "../pages/dashboarb/Dashboard";
 import UserProfile from "../pages/Auth/UserProfile";
 import AboutUs from "../pages/company/AboutUs";
 import ContactUs from "../pages/company/ContactUs";
+import GetRute from "../pages/Rute/GetRute";
 import ProtectedRoute from "../component/ProtectedRoute";
 
 export default function AppRoutes() {
@@ -40,10 +41,28 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/routes"
+        element={
+          <ProtectedRoute>
+            <GetRute />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="*"
-        element={<h1 style={{ textAlign: "center", backgroundColor: "lightgray"  ,color: "darkred" }}>404 - Page Not Found</h1>}
+        element={
+          <h1
+            style={{
+              textAlign: "center",
+              backgroundColor: "lightgray",
+              color: "darkred",
+            }}
+          >
+            404 - Page Not Found
+          </h1>
+        }
       />
     </Routes>
   );
