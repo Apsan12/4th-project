@@ -208,23 +208,33 @@ export const permanentDeleteRouteController = async (req, res) => {
 
 // ------------------ Route Search Controllers ------------------
 
-// Search routes by origin and destination
+// Search routes by origin and destination (now uses getAllRoutes with fuzzy search)
 export const searchRoutesController = async (req, res) => {
   try {
     const { origin, destination } = req.query;
 
-    if (!origin || !destination) {
+    // Allow search with just one parameter or both
+    if (!origin && !destination) {
       return res.status(400).json({
-        message: "Both origin and destination are required",
+        message: "At least origin or destination is required",
       });
     }
 
-    const routes = await findRoutesByOriginDestination(origin, destination);
+    console.log(
+      `🔍 Searching routes: origin="${origin || "any"}", destination="${
+        destination || "any"
+      }"`
+    );
+
+    // Use getAllRoutes with search filters (includes fuzzy matching)
+    const result = await getAllRoutes({ origin, destination }, 1, 100);
+
+    console.log(`✅ Found ${result.routes.length} routes`);
 
     res.status(200).json({
       success: true,
-      routes,
-      count: routes.length,
+      routes: result.routes,
+      count: result.routes.length,
     });
   } catch (err) {
     console.error("Search Routes Error:", err);
