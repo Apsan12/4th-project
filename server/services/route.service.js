@@ -1,5 +1,6 @@
 import Route from "../model/route.model.js";
 import Bus from "../model/bus.model.js";
+import { filterRoutesBySearch } from "../utils/searchUtils.js";
 
 // ------------------ Route CRUD Operations ------------------
 
@@ -48,20 +49,23 @@ export const createRoute = async (routeData) => {
   return route;
 };
 
-// Get all routes with pagination and filtering
+// Get all routes with pagination and filtering (with fuzzy search)
 export const getAllRoutes = async (filters = {}, page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
   const where = {};
 
-  // Apply filters
-  if (filters.origin) where.origin = filters.origin;
-  if (filters.destination) where.destination = filters.destination;
-  if (filters.isActive !== undefined) where.isActive = filters.isActive;
+  // Only apply exact filters if not using search
+  const hasSearchTerms = filters.origin || filters.destination;
+
+  if (!hasSearchTerms) {
+    if (filters.isActive !== undefined) where.isActive = filters.isActive;
+  } else {
+    // For search, only filter by active status
+    where.isActive = true;
+  }
 
   const { count, rows } = await Route.findAndCountAll({
     where,
-    limit,
-    offset,
     order: [["createdAt", "DESC"]],
     include: [
       {
@@ -72,12 +76,34 @@ export const getAllRoutes = async (filters = {}, page = 1, limit = 10) => {
     ],
   });
 
+  // Apply fuzzy search filtering if search terms provided
+  let filteredRoutes = rows;
+  if (hasSearchTerms) {
+    console.log(
+      `🔍 Applying fuzzy search: origin="${
+        filters.origin || "any"
+      }", destination="${filters.destination || "any"}"`
+    );
+    filteredRoutes = filterRoutesBySearch(
+      rows,
+      filters.origin,
+      filters.destination
+    );
+    console.log(
+      `✅ Filtered from ${rows.length} to ${filteredRoutes.length} routes`
+    );
+  }
+
+  // Apply pagination to filtered results
+  const totalFiltered = filteredRoutes.length;
+  const paginatedRoutes = filteredRoutes.slice(offset, offset + limit);
+
   return {
-    routes: rows,
-    totalCount: count,
+    routes: paginatedRoutes,
+    totalCount: totalFiltered,
     currentPage: page,
-    totalPages: Math.ceil(count / limit),
-    hasNextPage: page < Math.ceil(count / limit),
+    totalPages: Math.ceil(totalFiltered / limit),
+    hasNextPage: page < Math.ceil(totalFiltered / limit),
     hasPreviousPage: page > 1,
   };
 };
@@ -181,7 +207,7 @@ export const permanentDeleteRoute = async (id) => {
 
 // ------------------ Route Search & Filter Operations ------------------
 
-// Find routes by origin and destination
+// Find routes by origin and destination (exact match)
 export const findRoutesByOriginDestination = async (origin, destination) => {
   return await Route.findByOriginDestination(origin, destination);
 };
