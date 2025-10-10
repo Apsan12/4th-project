@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
+
 
 # Create a non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
@@ -16,6 +17,7 @@ RUN addgroup -g 1001 -S nodejs && \
 
 # Copy the rest of the application code
 COPY . .
+
 
 # Change ownership of the app directory to the nodejs user
 RUN chown -R nodeapp:nodejs /app

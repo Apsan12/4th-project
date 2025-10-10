@@ -226,7 +226,6 @@ export const searchRoutesController = async (req, res) => {
       }"`
     );
 
-    // Use getAllRoutes with search filters (includes fuzzy matching)
     const result = await getAllRoutes({ origin, destination }, 1, 100);
 
     console.log(`✅ Found ${result.routes.length} routes`);
@@ -283,7 +282,6 @@ export const getRouteByCodeController = async (req, res) => {
   }
 };
 
-// ------------------ Route Analytics Controllers ------------------
 
 // Get route statistics
 export const getRouteStatsController = async (req, res) => {

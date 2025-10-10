@@ -54,7 +54,6 @@ export const getAllRoutes = async (filters = {}, page = 1, limit = 10) => {
   const offset = (page - 1) * limit;
   const where = {};
 
-  // Only apply exact filters if not using search
   const hasSearchTerms = filters.origin || filters.destination;
 
   if (!hasSearchTerms) {
@@ -76,7 +75,6 @@ export const getAllRoutes = async (filters = {}, page = 1, limit = 10) => {
     ],
   });
 
-  // Apply fuzzy search filtering if search terms provided
   let filteredRoutes = rows;
   if (hasSearchTerms) {
     console.log(

@@ -120,7 +120,6 @@ export const filterRoutesBySearch = (routes, origin, destination) => {
     return { route, score };
   });
 
-  // Sort by relevance score (highest first) and return routes
   return scoredRoutes
     .sort((a, b) => b.score - a.score)
     .map((item) => item.route);
