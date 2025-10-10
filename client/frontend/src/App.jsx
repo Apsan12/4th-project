@@ -1,10 +1,14 @@
-import React from 'react'
-import AppRoutes from './Routes'
+import React from "react";
+import AppRoutes from "./Routes";
+import ChatBot from "./pages/Botchat";
 
 function App() {
   return (
-    <AppRoutes />
-  )
+    <>
+      <AppRoutes />
+      <ChatBot />
+    </>
+  );
 }
 
-export default App
+export default App;

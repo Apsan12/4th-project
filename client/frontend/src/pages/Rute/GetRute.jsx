@@ -5,7 +5,8 @@ import "./GetRute.css";
 
 const GetRute = () => {
   const [routes, setRoutes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // don't show global loading on initial mount (we fetch only on user action)
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -14,30 +15,51 @@ const GetRute = () => {
     destination: "",
   });
   const [isSearching, setIsSearching] = useState(false);
+  const [showAllMode, setShowAllMode] = useState(false);
+  const [rawResponseText, setRawResponseText] = useState(null);
+  const [isFetchingAll, setIsFetchingAll] = useState(false);
 
   // Fetch all routes on component mount
+  // Do NOT fetch all routes on mount. Keep the page simple until user requests.
   useEffect(() => {
-    fetchAllRoutes();
+    // no-op
   }, []);
 
   const fetchAllRoutes = async () => {
     try {
       setLoading(true);
+      setIsFetchingAll(true);
       setError("");
-      const response = await getAllRutes();
-      console.log("Routes fetched:", response);
 
-      if (response.success && response.routes) {
-        setRoutes(response.routes);
-      } else {
-        setRoutes([]);
-      }
+      // timeout wrapper to avoid long buffering
+      const timeoutMs = 12000; // 12s
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), timeoutMs)
+      );
+
+      // our service now normalizes to an array
+      const response = await Promise.race([getAllRutes(), timeoutPromise]);
+      console.log("Routes fetched:", response);
+      // response is expected to be an array
+      setRoutes(Array.isArray(response) ? response : []);
     } catch (err) {
       console.error("Error fetching routes:", err);
-      setError("Failed to fetch routes. Please try again later.");
+      setError("Failed to fetch routes. " + (err?.message || ""));
+      // if timeout or network error, exit show-all mode so UI isn't stuck
+      if (
+        String(err?.message || "")
+          .toLowerCase()
+          .includes("timed out") ||
+        String(err?.message || "")
+          .toLowerCase()
+          .includes("network")
+      ) {
+        setShowAllMode(false);
+      }
       setRoutes([]);
     } finally {
       setLoading(false);
+      setIsFetchingAll(false);
     }
   };
 
@@ -55,11 +77,8 @@ const GetRute = () => {
         searchQuery.origin,
         searchQuery.destination
       );
-
-      if (response.success && response.routes) {
-        setRoutes(response.routes);
-      } else {
-        setRoutes([]);
+      setRoutes(Array.isArray(response) ? response : []);
+      if (!Array.isArray(response) || response.length === 0) {
         setError("No routes found for the selected criteria.");
       }
     } catch (err) {
@@ -123,7 +142,11 @@ const GetRute = () => {
   };
 
   const clearSearch = () => {
+    // Toggle show-all mode: when activated, fetch all routes and disable filters
     setSearchQuery({ origin: "", destination: "" });
+    setError("");
+    setIsSearching(false);
+    setShowAllMode(true);
     fetchAllRoutes();
   };
 
@@ -144,6 +167,23 @@ const GetRute = () => {
         <h1>🚌 Bus Routes</h1>
         <p>Find and explore available bus routes</p>
       </div>
+
+      {showAllMode && rawResponseText && (
+        <div
+          style={{
+            background: "#f8fafc",
+            padding: 10,
+            borderRadius: 8,
+            margin: "10px 0",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          <strong>API raw response (preview, truncated):</strong>
+          <pre style={{ maxHeight: 200, overflow: "auto", fontSize: 12 }}>
+            {rawResponseText}
+          </pre>
+        </div>
+      )}
 
       {/* Search Section */}
       <div className="search-section">
@@ -182,12 +222,38 @@ const GetRute = () => {
           </div>
 
           <div className="search-buttons">
-            <button type="submit" className="search-btn" disabled={isSearching}>
+            <button
+              type="submit"
+              className="search-btn"
+              disabled={isSearching || showAllMode}
+            >
               {isSearching ? "Searching..." : "🔍 Search Routes"}
             </button>
 
-            <button type="button" onClick={clearSearch} className="clear-btn">
-              📋 Show All Routes
+            <button
+              type="button"
+              onClick={async () => {
+                if (showAllMode) {
+                  // exit show-all mode and clear list
+                  setShowAllMode(false);
+                  setSearchQuery({ origin: "", destination: "" });
+                  setRoutes([]);
+                  setError("");
+                } else {
+                  // enable show-all mode and fetch
+                  setShowAllMode(true);
+                  setError("");
+                  await fetchAllRoutes();
+                }
+              }}
+              className="clear-btn"
+              disabled={isFetchingAll}
+            >
+              {isFetchingAll
+                ? "Loading all..."
+                : showAllMode
+                ? "✖ Exit Show All"
+                : "📋 Show All Routes"}
             </button>
           </div>
         </form>
@@ -202,6 +268,30 @@ const GetRute = () => {
       )}
 
       {/* Routes Grid */}
+      {/* Debug info: shows what's currently in state (helps diagnose rendering issues) */}
+      {/* <div
+        className="debug-info"
+        style={{
+          marginBottom: 12,
+          padding: 10,
+          background: "#fff7ed",
+          borderRadius: 8,
+        }}
+      >
+        <strong>Debug:</strong> routes in state = {routes.length}
+        <div
+          style={{
+            marginTop: 8,
+            maxHeight: 160,
+            overflow: "auto",
+            fontSize: 12,
+          }}
+        >
+          <pre style={{ whiteSpace: "pre-wrap" }}>
+            {JSON.stringify(routes.slice(0, 3), null, 2)}
+          </pre>
+        </div>
+      </div> */}
       <div className="routes-grid">
         {routes.length === 0 ? (
           <div className="no-routes">

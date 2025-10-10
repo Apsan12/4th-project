@@ -78,3 +78,165 @@
     height: 200px;
   }
 }
+
+/* New styles for improved Bus page */
+.bus-hero {
+  display: flex;
+  gap: 26px;
+  padding: 18px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(12, 30, 60, 0.08);
+  padding: 18px;
+}
+
+.hero-media {
+  position: relative;
+  flex: 0 0 420px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.hero-media img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.status-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.status-badge.available {
+  background: #16a34a;
+}
+.status-badge.unavailable {
+  background: #ef4444;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 240px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.bus-number {
+  font-size: 28px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+.seat-count {
+  color: #0b76ef;
+  font-weight: 700;
+}
+
+.subline {
+  color: #666;
+  margin: 8px 0 12px;
+}
+.bus-desc {
+  color: #444;
+  margin-bottom: 14px;
+}
+
+.chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.chip {
+  background: #f3f4f6;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #333;
+  font-size: 14px;
+}
+
+.actions-row {
+  display: flex;
+  gap: 12px;
+}
+.btn.large {
+  padding: 12px 18px;
+  border-radius: 10px;
+}
+.btn.outline {
+  border: 1px solid #d1d5db;
+  background: transparent;
+}
+
+.seat-map {
+  margin-top: 6px;
+}
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  padding: 12px 0;
+}
+.seat {
+  background: #f8fafc;
+  padding: 10px 6px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}
+.seat.aisle {
+  background: #fff7ed;
+}
+.muted {
+  color: #777;
+  font-size: 13px;
+}
+
+@media (max-width: 980px) {
+  .hero-media {
+    flex: 0 0 320px;
+  }
+  .hero-media img {
+    height: 260px;
+  }
+  .seat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .bus-hero {
+    flex-direction: column;
+  }
+  .hero-media {
+    width: 100%;
+    flex: unset;
+  }
+  .hero-media img {
+    height: 200px;
+  }
+  .seat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
