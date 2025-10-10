@@ -29,10 +29,10 @@ export default function Home() {
         <div className="cta-section">
           <div className="cta-buttons">
             <Link to="/register" className="cta-button primary">
-              Get Started
+              Register Here
             </Link>
             <Link to="/login" className="cta-button">
-              Sign In
+              Login Here
             </Link>
           </div>
 

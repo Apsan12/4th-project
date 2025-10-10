@@ -65,6 +65,12 @@ const SideBar = () => {
       label: "Help & Support",
       description: "Get Assistance",
     },
+    {
+      path: "/Botchat",
+      icon: "💬",
+      label: "Bot Chat",
+      description: "Get Assistance By AI",
+    },
   ];
 
   return (

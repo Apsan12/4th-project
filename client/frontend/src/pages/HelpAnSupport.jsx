@@ -146,5 +146,66 @@ const HelpAndSupport = () => {
     </>
   );
 };
+const ChatBot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hello! How can I assist you with your bus booking?" },
+  ]);
+  const [input, setInput] = useState("");
+
+  const toggleChat = () => setIsOpen(!isOpen);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+
+    const newMessages = [...messages, { sender: "user", text: input }];
+
+    // Basic chatbot replies (customize later)
+    let reply = "I'm not sure, please contact support at +977-9800000000.";
+    if (input.toLowerCase().includes("book")) reply = "You can book tickets from the Home page.";
+    if (input.toLowerCase().includes("cancel")) reply = "Go to 'My Bookings' to cancel your ticket.";
+    if (input.toLowerCase().includes("price")) reply = "Ticket prices depend on your selected route.";
+    if (input.toLowerCase().includes("hello") || input.toLowerCase().includes("hi")) reply = "Hi there! 😊";
+
+    newMessages.push({ sender: "bot", text: reply });
+
+    setMessages(newMessages);
+    setInput("");
+  };
+
+  return (
+    <>
+      <div className="chat-launcher" onClick={toggleChat}>💬</div>
+
+      {isOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            Live Chat Support
+            <span className="chat-close" onClick={toggleChat}>×</span>
+          </div>
+
+          <div className="chat-body">
+            {messages.map((msg, index) => (
+              <div key={index} className={`chat-msg ${msg.sender}`}>
+                {msg.text}
+              </div>
+            ))}
+          </div>
+
+          <div className="chat-input">
+            <input
+              type="text"
+              value={input}
+              placeholder="Type a message..."
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            />
+            <button onClick={handleSend}>Send</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
 export default HelpAndSupport;

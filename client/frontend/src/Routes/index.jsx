@@ -14,6 +14,7 @@ import Bus from "../pages/bus/Bus";
 import BusList from "../pages/bus/BusList";
 import ProtectedRoute from "../component/ProtectedRoute";
 import HelpAndSupport from "../pages/HelpAnSupport";
+import ChatBot from "../pages/Botchat";
 
 export default function AppRoutes() {
   return (
@@ -34,6 +35,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Botchat"
+        element={
+          <ProtectedRoute>
+            <ChatBot />
           </ProtectedRoute>
         }
       />
