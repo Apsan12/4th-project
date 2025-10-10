@@ -32,6 +32,114 @@ import {
 // Create new bus
 export const createBusController = async (req, res) => {
   try {
+    // Defensive parsing for form-data: trim values, reject empty strings, and
+    // return a helpful error if numbers are invalid. This prevents Zod from
+    // receiving NaN which produces unhelpful messages.
+    if (req.body) {
+      // Debug: show raw incoming fields for easier diagnosis when using form-data
+      try {
+        console.debug("createBusController - raw incoming fields:", {
+          capacity: req.body.capacity,
+          capacityType: Array.isArray(req.body.capacity)
+            ? "array"
+            : typeof req.body.capacity,
+          routeId: req.body.routeId,
+          routeIdType: Array.isArray(req.body.routeId)
+            ? "array"
+            : typeof req.body.routeId,
+          driverId: req.body.driverId,
+          driverIdType: Array.isArray(req.body.driverId)
+            ? "array"
+            : typeof req.body.driverId,
+        });
+      } catch (e) {
+        console.debug("createBusController - failed to log incoming fields", e);
+      }
+      const parseNumberField = (key, required = false) => {
+        if (req.body[key] === undefined) return null;
+        let raw = req.body[key];
+
+        // If form-data repeated the key, it may be an array — pick the first value
+        if (Array.isArray(raw)) raw = raw[0];
+
+        // Normalize booleans/null-like strings
+        if (raw === null)
+          return { field: key, message: `${key} cannot be null` };
+        if (typeof raw === "string") {
+          const trimmed = raw.trim();
+          if (
+            trimmed === "" ||
+            trimmed.toLowerCase() === "null" ||
+            trimmed.toLowerCase() === "undefined"
+          ) {
+            return {
+              field: key,
+              message: required
+                ? `${key} is required`
+                : `${key} cannot be empty`,
+            };
+          }
+          const n = Number(trimmed);
+          if (Number.isNaN(n)) {
+            console.debug(
+              `parseNumberField: invalid numeric value for ${key}:`,
+              trimmed
+            );
+            return { field: key, message: `${key} must be a valid number` };
+          }
+          req.body[key] = n;
+          return null;
+        }
+
+        // If it's already a number, accept it
+        if (typeof raw === "number") return null;
+
+        // Try coercion for other types
+        const n = Number(raw);
+        if (Number.isNaN(n)) {
+          console.debug(
+            `parseNumberField: invalid numeric value for ${key}:`,
+            raw
+          );
+          return { field: key, message: `${key} must be a valid number` };
+        }
+        req.body[key] = n;
+        return null;
+      };
+
+      // capacity and routeId are required by schema; driverId is optional
+      const capErr = parseNumberField("capacity", true);
+      if (capErr) {
+        console.debug(
+          "createBusController - capacity parse failed, raw:",
+          req.body.capacity
+        );
+        // include raw value for easier debugging in Postman
+        return res
+          .status(400)
+          .json({
+            errors: [Object.assign({}, capErr, { raw: req.body.capacity })],
+            message: "Validation failed",
+          });
+      }
+      const routeErr = parseNumberField("routeId", true);
+      if (routeErr)
+        return res
+          .status(400)
+          .json({
+            errors: [Object.assign({}, routeErr, { raw: req.body.routeId })],
+            message: "Validation failed",
+          });
+      const driverErr = parseNumberField("driverId", false);
+      if (driverErr)
+        return res
+          .status(400)
+          .json({
+            errors: [Object.assign({}, driverErr, { raw: req.body.driverId })],
+            message: "Validation failed",
+          });
+    }
+
     // Validate request body
     const result = createBusSchema.safeParse(req.body);
     if (!result.success) {

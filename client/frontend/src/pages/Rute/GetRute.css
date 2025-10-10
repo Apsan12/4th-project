@@ -508,6 +508,59 @@
   margin-top: 15px !important;
 }
 
+/* Buses list inside modal */
+.buses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bus-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6eef9;
+}
+.bus-thumb {
+  width: 120px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.bus-info {
+  flex: 1;
+}
+.bus-number {
+  font-weight: 700;
+  color: #2c3e50;
+}
+.bus-meta {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+.bus-desc {
+  color: #56616d;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+.bus-action {
+  display: flex;
+  align-items: center;
+}
+.select-bus-btn {
+  padding: 8px 12px;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.select-bus-btn:hover {
+  background: #219150;
+}
+
 .modal-footer {
   padding: 20px 30px;
   border-top: 1px solid #ecf0f1;

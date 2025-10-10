@@ -42,7 +42,5 @@ async function createSuperAdmin() {
   }
 }
 
-// Call at startup
-createSuperAdmin();
-
+// Export the function but do NOT call it here. index.js will call it once during startup.
 export default createSuperAdmin;

@@ -28,6 +28,7 @@ const SideBar = () => {
       label: "Buses",
       description: "Manage Bus Fleet",
     },
+    // Ensure sidebar points to public bus list
     {
       path: "/routes",
       icon: "🛣️",

@@ -21,18 +21,18 @@ export const createBusSchema = z.object({
     })
     .default("standard"),
 
-  capacity: z
+  capacity: z.coerce
     .number()
     .int("Capacity must be a whole number")
     .min(1, "Capacity must be at least 1")
     .max(100, "Capacity cannot exceed 100"),
 
-  routeId: z
+  routeId: z.coerce
     .number()
     .int("Route ID must be a valid integer")
     .positive("Route ID must be positive"),
 
-  driverId: z
+  driverId: z.coerce
     .number()
     .int("Driver ID must be a valid integer")
     .positive("Driver ID must be positive")
@@ -87,20 +87,20 @@ export const updateBusSchema = z
       })
       .optional(),
 
-    capacity: z
+    capacity: z.coerce
       .number()
       .int("Capacity must be a whole number")
       .min(1, "Capacity must be at least 1")
       .max(100, "Capacity cannot exceed 100")
       .optional(),
 
-    routeId: z
+    routeId: z.coerce
       .number()
       .int("Route ID must be a valid integer")
       .positive("Route ID must be positive")
       .optional(),
 
-    driverId: z
+    driverId: z.coerce
       .number()
       .int("Driver ID must be a valid integer")
       .positive("Driver ID must be positive")
@@ -130,7 +130,7 @@ export const updateBusSchema = z
       .trim()
       .optional(),
 
-    yearOfManufacture: z
+    yearOfManufacture: z.coerce
       .number()
       .int("Year must be a whole number")
       .min(1950, "Year cannot be before 1950")
@@ -191,18 +191,18 @@ export const busIdSchema = z.object({
 
 // Bus Assignment Validation Schema
 export const busAssignmentSchema = z.object({
-  busId: z
+  busId: z.coerce
     .number()
     .int("Bus ID must be a valid integer")
     .positive("Bus ID must be positive"),
 
-  routeId: z
+  routeId: z.coerce
     .number()
     .int("Route ID must be a valid integer")
     .positive("Route ID must be positive")
     .optional(),
 
-  driverId: z
+  driverId: z.coerce
     .number()
     .int("Driver ID must be a valid integer")
     .positive("Driver ID must be positive")

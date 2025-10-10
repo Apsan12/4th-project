@@ -52,25 +52,44 @@ export const uploadUserImage = [
     console.log("🟢 MIDDLEWARE STEP 1: Before multer");
     next();
   },
-  upload.single("userImage"),
+  // accept any file field to avoid 'Unexpected field' MulterError when clients
+  // use different field names. We'll pick the first image-like file available.
+  upload.any(),
   async (req, res, next) => {
-    console.log("� MIDDLEWARE STEP 2: Multer middleware running...");
-    console.log("📁 File received:", req.file ? "YES" : "NO");
+    console.log("🟡 MIDDLEWARE STEP 2: Multer middleware running...");
+    // multer sets req.file for single, req.files for any/multiple
+    const pickFile = () => {
+      if (req.file) return req.file;
+      if (Array.isArray(req.files) && req.files.length) {
+        // prefer common field names if present
+        const preferred = ["userImage", "image", "file", "avatar"];
+        for (const name of preferred) {
+          const found = req.files.find((f) => f.fieldname === name);
+          if (found) return found;
+        }
+        // fallback to the first file
+        return req.files[0];
+      }
+      return null;
+    };
+
+    const file = pickFile();
+    // ensure controllers relying on req.file still work
+    if (!req.file && file) req.file = file;
+    console.log("📁 File received:", file ? "YES" : "NO");
     console.log("📋 Body before processing:", req.body);
 
-    if (req.file) {
+    if (file) {
       try {
         console.log("🚀 Uploading user image to Cloudinary...");
         console.log("📄 File details:", {
-          originalname: req.file.originalname,
-          mimetype: req.file.mimetype,
-          size: req.file.size,
+          originalname: file.originalname,
+          fieldname: file.fieldname,
+          mimetype: file.mimetype,
+          size: file.size,
         });
 
-        const imageUrl = await uploadToCloudinary(
-          req.file,
-          "bus-management/users"
-        );
+        const imageUrl = await uploadToCloudinary(file, "bus-management/users");
         req.body.imageUrl = imageUrl;
         console.log("✅ Image uploaded:", imageUrl);
         console.log("📋 Body after processing:", req.body);
@@ -89,15 +108,27 @@ export const uploadUserImage = [
 ];
 
 export const uploadBusImage = [
-  upload.single("busImage"),
+  // accept any field to be tolerant to client-side naming
+  upload.any(),
   async (req, res, next) => {
-    if (req.file) {
+    const pickFile = () => {
+      if (req.file) return req.file;
+      if (Array.isArray(req.files) && req.files.length) {
+        const preferred = ["busImage", "image", "file", "photo"];
+        for (const name of preferred) {
+          const found = req.files.find((f) => f.fieldname === name);
+          if (found) return found;
+        }
+        return req.files[0];
+      }
+      return null;
+    };
+
+    const file = pickFile();
+    if (file) {
       try {
         console.log("🚀 Uploading bus image to Cloudinary...");
-        const imageUrl = await uploadToCloudinary(
-          req.file,
-          "bus-management/buses"
-        );
+        const imageUrl = await uploadToCloudinary(file, "bus-management/buses");
         req.body.imageUrl = imageUrl;
         console.log("✅ Bus image uploaded:", imageUrl);
       } catch (error) {
@@ -107,6 +138,8 @@ export const uploadBusImage = [
           message: "Bus image upload failed",
         });
       }
+    } else {
+      console.log("ℹ️ No bus file uploaded");
     }
     next();
   },

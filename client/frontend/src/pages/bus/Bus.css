@@ -1,0 +1,80 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.bus-page {
+  padding: 24px 0;
+  font-family: inherit;
+  flex: 1 0 auto;
+}
+
+.bus-card {
+  display: flex;
+  gap: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+  align-items: center;
+}
+
+.bus-media img {
+  width: 380px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.bus-info h2 {
+  margin: 0 0 10px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 18px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  color: #444;
+}
+
+.bus-desc {
+  margin-top: 8px;
+  color: #555;
+}
+
+.bus-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  background: transparent;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #0b76ef;
+  color: #fff;
+  border: none;
+}
+
+@media (max-width: 880px) {
+  .bus-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bus-media img {
+    width: 100%;
+    height: 200px;
+  }
+}

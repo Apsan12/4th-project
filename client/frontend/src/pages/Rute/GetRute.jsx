@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAllRutes, getRuteById, searchRutes } from "../../Services/rute";
+import { getBusesByRoute } from "../../Services/bus";
 import "./GetRute.css";
 
 const GetRute = () => {
@@ -76,7 +77,24 @@ const GetRute = () => {
       const response = await getRuteById(route.id);
 
       if (response.success && response.route) {
-        setSelectedRoute(response.route);
+        const routeData = response.route;
+        // fetch buses for this route
+        try {
+          const busesRes = await getBusesByRoute(route.id);
+          if (busesRes && busesRes.success) {
+            routeData.availableBuses = busesRes.buses || [];
+            routeData.availableCount = (busesRes.buses || []).length;
+          } else {
+            routeData.availableBuses = [];
+            routeData.availableCount = 0;
+          }
+        } catch (busErr) {
+          console.warn("Error fetching buses for route", busErr);
+          routeData.availableBuses = [];
+          routeData.availableCount = 0;
+        }
+
+        setSelectedRoute(routeData);
         setShowModal(true);
       }
     } catch (err) {
@@ -362,6 +380,45 @@ const GetRute = () => {
                         station for real-time schedules.
                       </em>
                     </p>
+                  </div>
+                </div>
+
+                {/* Available buses for this route */}
+                <div className="info-section">
+                  <h4>
+                    🚌 Available Buses ({selectedRoute.availableCount || 0})
+                  </h4>
+                  <div className="buses-list">
+                    {selectedRoute.availableBuses &&
+                    selectedRoute.availableBuses.length > 0 ? (
+                      selectedRoute.availableBuses.map((bus) => (
+                        <div key={bus.id} className="bus-item">
+                          <img
+                            src={bus.imageUrl || "/placeholder-bus.png"}
+                            alt={bus.busNumber}
+                            className="bus-thumb"
+                          />
+                          <div className="bus-info">
+                            <div className="bus-number">
+                              {bus.busNumber} · {bus.busType}
+                            </div>
+                            <div className="bus-meta">
+                              Capacity: {bus.capacity} · Status: {bus.status}
+                            </div>
+                            <div className="bus-desc">
+                              {bus.description || ""}
+                            </div>
+                          </div>
+                          <div className="bus-action">
+                            <button className="select-bus-btn">
+                              Select / Book
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No buses available for this route right now.</p>
+                    )}
                   </div>
                 </div>
               </div>

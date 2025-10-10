@@ -10,6 +10,8 @@ import UserProfile from "../pages/Auth/UserProfile";
 import AboutUs from "../pages/company/AboutUs";
 import ContactUs from "../pages/company/ContactUs";
 import GetRute from "../pages/Rute/GetRute";
+import Bus from "../pages/bus/Bus";
+import BusList from "../pages/bus/BusList";
 import ProtectedRoute from "../component/ProtectedRoute";
 import HelpAndSupport from "../pages/HelpAnSupport";
 
@@ -51,6 +53,8 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/buses" element={<BusList />} />
+      <Route path="/bus/:busNumber" element={<Bus />} />
 
       <Route
         path="*"

@@ -1,0 +1,189 @@
+/* Bus list styles - matches site theme with clean cards */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.bus-list-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.bus-list-header h2 {
+  margin: 0;
+}
+
+.muted {
+  color: #666;
+}
+
+.bus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.bus-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.bus-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  min-width: 220px;
+}
+
+.select-input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.bus-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bus-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09);
+}
+
+.bus-thumb img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+.status-badge.available {
+  background: #16a34a;
+}
+.status-badge[class*="in-transit"] {
+  background: #0ea5e9;
+}
+.status-badge.maintenance {
+  background: #f59e0b;
+}
+.status-badge.out-of-service {
+  background: #ef4444;
+}
+
+.bus-thumb {
+  position: relative;
+}
+
+.bus-card-info {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bus-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.capacity {
+  color: #0b76ef;
+  font-weight: 600;
+}
+
+.bus-meta {
+  display: flex;
+  gap: 12px;
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+.meta-item {
+  background: #f8fafc;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.bus-card-info h4 {
+  margin: 0;
+}
+
+.small {
+  font-size: 0.9rem;
+}
+
+.bus-card-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.no-results {
+  padding: 40px;
+  text-align: center;
+  color: #555;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  background: transparent;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #0b76ef;
+  color: #fff;
+  border: none;
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid #0b76ef;
+  color: #0b76ef;
+}
+
+.page-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.loading {
+  padding: 40px 0;
+  text-align: center;
+}
+
+.error {
+  color: #b00020;
+  padding: 24px;
+}
