@@ -11,7 +11,7 @@ export default function Home() {
         </div>
         <div className="navbar-buttons">
           <Link to="/login" className="navbar-button">
-            Login
+            Sign In
           </Link>
           <Link to="/register" className="navbar-button sign-up">
             Sign Up
@@ -32,7 +32,7 @@ export default function Home() {
               Register Here
             </Link>
             <Link to="/login" className="cta-button">
-              Login Here
+              Sign In
             </Link>
           </div>
 
@@ -41,8 +41,8 @@ export default function Home() {
               <div className="feature-icon">🚌</div>
               <h3 className="feature-title">Easy Booking</h3>
               <p className="feature-description">
-                Book your bus tickets in just a few clicks with our resposive
-                interface
+                Book your bus tickets in just a few clicks with  team of
+                jam jam .
               </p>
             </div>
 

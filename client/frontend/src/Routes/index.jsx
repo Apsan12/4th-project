@@ -12,8 +12,12 @@ import ContactUs from "../pages/company/ContactUs";
 import GetRute from "../pages/Rute/GetRute";
 import Bus from "../pages/bus/Bus";
 import BusList from "../pages/bus/BusList";
+import Booking from "../pages/booking/Booking";
+import UpdateBooking from "../pages/booking/updateBooking";
+import CancelBooking from "../pages/booking/CancelBooking";
 import ProtectedRoute from "../component/ProtectedRoute";
 import HelpAndSupport from "../pages/HelpAnSupport";
+import GetMyBooking from "../pages/Auth/GetMyBooking";
 
 export default function AppRoutes() {
   return (
@@ -55,6 +59,10 @@ export default function AppRoutes() {
       />
       <Route path="/buses" element={<BusList />} />
       <Route path="/bus/:busNumber" element={<Bus />} />
+      <Route path="/booking" element={<Booking />} />
+      <Route path="/bookings/:slug/update" element={<UpdateBooking />} />
+      <Route path="/bookings/:slug/cancel" element={<CancelBooking />} />
+      <Route path="/my-bookings" element={<GetMyBooking />} />
 
       <Route
         path="*"

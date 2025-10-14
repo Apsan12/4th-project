@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { userProfile } from "../../Services/auth";
 import Navbar from "../../component/Navbar";
 import SideBar from "../../component/SideBar";
+import GetMyBooking from "../Auth/GetMyBooking";
 import Footer from "../../component/Fottter";
 import "./Dashboard.css";
 
@@ -154,9 +155,7 @@ const Dashboard = () => {
                   Welcome back, {user?.firstName || user?.username || "User"}!
                   👋
                 </h1>
-                <p>
-                   Hey there! We have the booking details for you!
-                </p>
+                <p>Book the tickets today and manage your trips easily.</p>
               </div>
               <div className="welcome-time">
                 <div className="current-time">{formatTime(currentTime)}</div>
@@ -264,6 +263,10 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            {/* My Bookings widget */}
+            <div className="widget bookings-widget-wrapper">
+              <GetMyBooking max={5} />
             </div>
           </div>
 

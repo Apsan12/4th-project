@@ -1,0 +1,138 @@
+.booking-page {
+  padding: 24px;
+}
+.booking-page h1 {
+  margin-bottom: 6px;
+}
+.booking-page .muted {
+  color: #666;
+  margin-bottom: 12px;
+}
+.booking-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 18px;
+  margin-top: 18px;
+}
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.booking-form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+.booking-form textarea {
+  min-height: 80px;
+}
+.bus-select-row {
+  display: flex;
+  gap: 8px;
+}
+.bus-select-row select {
+  flex: 1;
+}
+.bus-select-row input {
+  flex: 1;
+}
+.seat-map {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.seat {
+  width: 54px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+.seat.free:hover {
+  transform: translateY(-2px);
+}
+.seat.taken {
+  background: #e53935; /* red for reserved */
+  color: #fff;
+  cursor: not-allowed;
+  border-color: #b71c1c;
+}
+.seat.selected {
+  background: #0b74de;
+  color: #fff;
+}
+.input-error {
+  border-color: #b00020 !important;
+  box-shadow: 0 0 0 3px rgba(176, 0, 32, 0.06);
+}
+.field-error {
+  color: #b00020;
+  margin-top: 6px;
+  font-size: 13px;
+}
+.passenger-list input {
+  margin-top: 6px;
+}
+.form-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.primary {
+  background: #0b74de;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+}
+.link {
+  background: transparent;
+  color: #0b74de;
+  border: none;
+  cursor: pointer;
+}
+.form-error {
+  margin-top: 8px;
+  color: #b00020;
+  font-weight: 600;
+}
+.right-column dl {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 6px 12px;
+}
+.right-column dt {
+  color: #444;
+  font-weight: 700;
+}
+.right-column dd {
+  margin: 0;
+  color: #222;
+}
+.help {
+  margin-top: 14px;
+}
+
+@media (max-width: 880px) {
+  .booking-grid {
+    grid-template-columns: 1fr;
+  }
+  .right-column {
+    order: -1;
+  }
+}
