@@ -15,6 +15,7 @@ import BusList from "../pages/bus/BusList";
 import Booking from "../pages/booking/Booking";
 import UpdateBooking from "../pages/booking/updateBooking";
 import CancelBooking from "../pages/booking/CancelBooking";
+import BookingDetails from "../pages/booking/BookingDetails";
 import ProtectedRoute from "../component/ProtectedRoute";
 import HelpAndSupport from "../pages/HelpAnSupport";
 import GetMyBooking from "../pages/Auth/GetMyBooking";
@@ -62,6 +63,7 @@ export default function AppRoutes() {
       <Route path="/booking" element={<Booking />} />
       <Route path="/bookings/:slug/update" element={<UpdateBooking />} />
       <Route path="/bookings/:slug/cancel" element={<CancelBooking />} />
+      <Route path="/bookings/:slug" element={<BookingDetails />} />
       <Route path="/my-bookings" element={<GetMyBooking />} />
 
       <Route

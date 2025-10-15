@@ -1,9 +1,11 @@
-import React from "react";
+import React, { use } from "react";
 import Navbar from "../../component/Navbar";
 import Footer from "../../component/Fottter";
 import "./AboutUs.css";
+import { useNavigate } from "react-router-dom";
 
 const AboutUs = () => {
+  const navigate = useNavigate();
   return (
     <div className="about-page">
       <Navbar />
@@ -152,8 +154,10 @@ const AboutUs = () => {
               Experience the difference of reliable, comfortable transportation.
             </p>
             <div className="cta-buttons">
-              <button className="cta-button primary">Book Your Ticket</button>
-              <button className="cta-button secondary">Contact Us</button>
+              <button className="cta-button primary" onClick={()=>navigate("/booking")}>Book Your Ticket</button>
+              <button className="cta-button secondary" onClick={()=>{
+                navigate("/contact")
+              }}> Contact Us</button>
             </div>
           </section>
         </div>

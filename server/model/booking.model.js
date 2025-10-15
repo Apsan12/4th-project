@@ -21,7 +21,7 @@ class Booking extends Model {
       include: [
         {
           association: "user",
-          attributes: ["id", "username", "email", "phone"],
+          attributes: ["id", "username", "email", "phoneNumber"],
         },
         {
           association: "bus",

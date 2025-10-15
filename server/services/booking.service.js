@@ -153,7 +153,7 @@ class BookingService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "email", "phone"],
+          attributes: ["id", "username", "email", "phoneNumber"],
         },
         {
           model: Bus,
@@ -462,7 +462,7 @@ class BookingService {
         {
           model: User,
           as: "user",
-          attributes: ["username", "phone"],
+          attributes: ["username", "phoneNumber"],
         },
       ],
       order: [["seatNumbers", "ASC"]],

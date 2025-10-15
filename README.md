@@ -676,6 +676,8 @@ npm install --save-dev jest supertest
 
 # Run tests
 npm test
+
+# suport by the docker too 
 ```
 
 ### Frontend Testing

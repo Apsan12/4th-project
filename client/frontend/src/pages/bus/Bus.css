@@ -104,9 +104,20 @@
 
 .hero-media img {
   width: 100%;
-  height: 320px;
+  height: 360px;
   object-fit: cover;
   display: block;
+  transition: transform 0.6s ease;
+}
+
+.hero-media::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.28));
 }
 
 .status-badge {
@@ -139,7 +150,7 @@
   gap: 12px;
 }
 .bus-number {
-  font-size: 28px;
+  font-size: 32px;
   margin: 0;
   letter-spacing: 1px;
 }
@@ -190,18 +201,19 @@
 .seat-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  gap: 10px;
   padding: 12px 0;
 }
 .seat {
-  background: #f8fafc;
-  padding: 10px 6px;
-  border-radius: 6px;
+  background: linear-gradient(180deg, #ffffff, #f7f9fc);
+  padding: 12px 8px;
+  border-radius: 8px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+  border: 1px solid rgba(2, 6, 23, 0.04);
 }
 .seat.aisle {
-  background: #fff7ed;
+  background: linear-gradient(180deg, #fff7ed, #fff2e6);
 }
 .muted {
   color: #777;

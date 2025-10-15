@@ -8,6 +8,8 @@ import {
 } from "../../Services/bus";
 import { searchRutes } from "../../Services/rute";
 import { createBooking, checkSeatAvailability } from "../../Services/booking";
+import Navbar from "../../component/Navbar";
+import Footer from "../../component/Fottter";
 
 const PaymentMethods = ["cash", "card", "upi", "wallet"];
 
@@ -260,381 +262,393 @@ const Booking = () => {
   };
 
   return (
-    <main className="booking-page container">
-      <h1>Book a Ticket</h1>
-      <p className="muted">
-        Quickly reserve seats and receive an instant booking reference.
-      </p>
+    <>
+      <Navbar />
+      <main className="booking-page container">
+        <h1>Book a Ticket</h1>
+        <p className="muted">
+          Quickly reserve seats and receive an instant booking reference.
+        </p>
 
-      <div className="booking-grid">
-        <section className="left-column card">
-          {step === 1 && (
-            <div className="route-search">
-              <label>Search route</label>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  placeholder="Origin"
-                  value={routeOrigin}
-                  onChange={(e) => setRouteOrigin(e.target.value)}
-                />
-                <input
-                  placeholder="Destination"
-                  value={routeDestination}
-                  onChange={(e) => setRouteDestination(e.target.value)}
-                />
-                <button className="primary" onClick={searchRoutes}>
-                  Search
-                </button>
-              </div>
+        <div className="booking-grid">
+          <section className="left-column card">
+            {step === 1 && (
+              <div className="route-search">
+                <label>Search route</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    placeholder="Origin"
+                    value={routeOrigin}
+                    onChange={(e) => setRouteOrigin(e.target.value)}
+                  />
+                  <input
+                    placeholder="Destination"
+                    value={routeDestination}
+                    onChange={(e) => setRouteDestination(e.target.value)}
+                  />
+                  <button className="primary" onClick={searchRoutes}>
+                    Search
+                  </button>
+                </div>
 
-              <div style={{ marginTop: 12 }}>
-                {routes.length === 0 ? (
-                  <div className="muted">
-                    No routes yet. Try searching origin and destination.
-                  </div>
-                ) : (
-                  <div>
-                    <h4>Routes</h4>
-                    <ul>
-                      {routes.map((r) => (
-                        <li
-                          key={r.id || r.routeId || r.code}
-                          style={{ marginBottom: 8 }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
+                <div style={{ marginTop: 12 }}>
+                  {routes.length === 0 ? (
+                    <div className="muted">
+                      No routes yet. Try searching origin and destination.
+                    </div>
+                  ) : (
+                    <div>
+                      <h4>Routes</h4>
+                      <ul>
+                        {routes.map((r) => (
+                          <li
+                            key={r.id || r.routeId || r.code}
+                            style={{ marginBottom: 8 }}
                           >
-                            <div>
-                              <strong>
-                                {r.routeName ||
-                                  `${r.origin || r.from} → ${
-                                    r.destination || r.to
-                                  }`}
-                              </strong>
-                              <div className="muted">{r.description || ""}</div>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div>
+                                <strong>
+                                  {r.routeName ||
+                                    `${r.origin || r.from} → ${
+                                      r.destination || r.to
+                                    }`}
+                                </strong>
+                                <div className="muted">
+                                  {r.description || ""}
+                                </div>
+                              </div>
+                              <div>
+                                <button
+                                  className="primary"
+                                  onClick={() => selectRoute(r)}
+                                >
+                                  Select
+                                </button>
+                              </div>
                             </div>
-                            <div>
-                              <button
-                                className="primary"
-                                onClick={() => selectRoute(r)}
-                              >
-                                Select
-                              </button>
-                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {selectedRoute && (
+                  <div style={{ marginTop: 12 }}>
+                    <h4>Buses for route</h4>
+                    {routeBuses.length === 0 && (
+                      <div className="muted">
+                        No buses found for this route.
+                      </div>
+                    )}
+                    {routeBuses.map((b) => (
+                      <div
+                        key={b.id}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <div>
+                          <strong>
+                            {b.busNumber} · {b.busType}
+                          </strong>
+                          <div className="muted">
+                            Fare: ₹{b.route?.fare || b.fare || 0}
                           </div>
+                        </div>
+                        <div>
+                          <button
+                            className="primary"
+                            onClick={() => chooseBusAndContinue(b)}
+                          >
+                            Choose
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {step === 2 && (
+              <form onSubmit={onSubmit} className="booking-form">
+                {serverErrors && serverErrors.length > 0 && (
+                  <div className="card" style={{ marginBottom: 12 }}>
+                    <strong>Server validation errors:</strong>
+                    <ul style={{ marginTop: 8 }}>
+                      {serverErrors.map((err, i) => (
+                        <li key={i} style={{ color: "#b00020" }}>
+                          {err.field ? `${err.field}: ` : ""}
+                          {err.message || JSON.stringify(err)}
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
-              </div>
+                <label>Pick a bus (or enter number)</label>
+                <div className="bus-select-row">
+                  <select
+                    value={selectedBus?.id || ""}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      const bus = buses.find(
+                        (b) => String(b.id) === String(id)
+                      );
+                      if (bus) {
+                        setSelectedBus(bus);
+                        setBusNumberOrId(bus.busNumber || String(bus.id));
+                        setSelectedSeats([]);
+                        setPassengerNames([""]);
+                      }
+                    }}
+                  >
+                    <option value="">-- Choose from available buses --</option>
+                    {buses.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.busNumber} · {b.busType} · {b.route?.routeName || ""}
+                      </option>
+                    ))}
+                  </select>
 
-              {selectedRoute && (
-                <div style={{ marginTop: 12 }}>
-                  <h4>Buses for route</h4>
-                  {routeBuses.length === 0 && (
-                    <div className="muted">No buses found for this route.</div>
+                  <input
+                    placeholder="Or type bus number"
+                    value={busNumberOrId}
+                    onChange={(e) => setBusNumberOrId(e.target.value)}
+                    onBlur={(e) => loadBusByNumber(e.target.value)}
+                  />
+                </div>
+
+                <label>Travel date</label>
+                <input
+                  type="date"
+                  value={travelDate}
+                  onChange={(e) => setTravelDate(e.target.value)}
+                />
+
+                <label>Seats (tap to select)</label>
+                <div className="seat-map">
+                  {selectedBus ? (
+                    Array.from({ length: selectedBus.capacity || 20 }).map(
+                      (_, i) => {
+                        const num = i + 1;
+                        const taken =
+                          selectedBus.takenSeats &&
+                          selectedBus.takenSeats.includes(num);
+                        const selected = selectedSeats.includes(num);
+                        return (
+                          <button
+                            type="button"
+                            key={num}
+                            className={`seat ${
+                              taken ? "taken" : selected ? "selected" : "free"
+                            }`}
+                            disabled={taken}
+                            onClick={() => toggleSeat(num)}
+                          >
+                            {num}
+                          </button>
+                        );
+                      }
+                    )
+                  ) : (
+                    <div className="muted">Choose a bus to see seat map</div>
                   )}
-                  {routeBuses.map((b) => (
-                    <div
-                      key={b.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: 8,
-                      }}
-                    >
-                      <div>
-                        <strong>
-                          {b.busNumber} · {b.busType}
-                        </strong>
-                        <div className="muted">
-                          Fare: ₹{b.route?.fare || b.fare || 0}
+                </div>
+                {fieldErrors.seatNumbers && (
+                  <div className="field-error">{fieldErrors.seatNumbers}</div>
+                )}
+
+                <label>Passenger names</label>
+                <div className="passenger-list">
+                  {selectedSeats.map((seat, idx) => (
+                    <div key={seat} style={{ marginBottom: 8 }}>
+                      <input
+                        placeholder={`Passenger for seat ${seat}`}
+                        value={passengerNames[idx] || ""}
+                        onChange={(e) =>
+                          updatePassengerName(idx, e.target.value)
+                        }
+                        className={
+                          fieldErrors[`passengerNames.${idx}`]
+                            ? "input-error"
+                            : ""
+                        }
+                      />
+                      {fieldErrors[`passengerNames.${idx}`] && (
+                        <div className="field-error">
+                          {fieldErrors[`passengerNames.${idx}`]}
                         </div>
-                      </div>
-                      <div>
-                        <button
-                          className="primary"
-                          onClick={() => chooseBusAndContinue(b)}
-                        >
-                          Choose
-                        </button>
-                      </div>
+                      )}
                     </div>
                   ))}
+                  {selectedSeats.length === 0 && (
+                    <div className="muted">
+                      Select seats to enter passenger names
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )}
 
-          {step === 2 && (
-            <form onSubmit={onSubmit} className="booking-form">
-              {serverErrors && serverErrors.length > 0 && (
-                <div className="card" style={{ marginBottom: 12 }}>
-                  <strong>Server validation errors:</strong>
-                  <ul style={{ marginTop: 8 }}>
-                    {serverErrors.map((err, i) => (
-                      <li key={i} style={{ color: "#b00020" }}>
-                        {err.field ? `${err.field}: ` : ""}
-                        {err.message || JSON.stringify(err)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <label>Pick a bus (or enter number)</label>
-              <div className="bus-select-row">
+                <label>Contact phone</label>
+                <input
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  className={fieldErrors.contactPhone ? "input-error" : ""}
+                />
+                {fieldErrors.contactPhone && (
+                  <div className="field-error">{fieldErrors.contactPhone}</div>
+                )}
+
+                <label>Contact email</label>
+                <input
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  className={fieldErrors.contactEmail ? "input-error" : ""}
+                />
+                {fieldErrors.contactEmail && (
+                  <div className="field-error">{fieldErrors.contactEmail}</div>
+                )}
+
+                <label>Boarding point (optional)</label>
+                <input
+                  value={boardingPoint}
+                  onChange={(e) => setBoardingPoint(e.target.value)}
+                />
+
+                <label>Dropping point (optional)</label>
+                <input
+                  value={droppingPoint}
+                  onChange={(e) => setDroppingPoint(e.target.value)}
+                />
+
+                <label>Special requests (optional)</label>
+                <textarea
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
+                />
+
+                <label>Payment method</label>
                 <select
-                  value={selectedBus?.id || ""}
-                  onChange={(e) => {
-                    const id = e.target.value;
-                    const bus = buses.find((b) => String(b.id) === String(id));
-                    if (bus) {
-                      setSelectedBus(bus);
-                      setBusNumberOrId(bus.busNumber || String(bus.id));
-                      setSelectedSeats([]);
-                      setPassengerNames([""]);
-                    }
-                  }}
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
                 >
-                  <option value="">-- Choose from available buses --</option>
-                  {buses.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.busNumber} · {b.busType} · {b.route?.routeName || ""}
+                  {PaymentMethods.map((m) => (
+                    <option key={m} value={m}>
+                      {m.toUpperCase()}
                     </option>
                   ))}
                 </select>
 
-                <input
-                  placeholder="Or type bus number"
-                  value={busNumberOrId}
-                  onChange={(e) => setBusNumberOrId(e.target.value)}
-                  onBlur={(e) => loadBusByNumber(e.target.value)}
-                />
-              </div>
+                {error && <div className="form-error">{error}</div>}
 
-              <label>Travel date</label>
-              <input
-                type="date"
-                value={travelDate}
-                onChange={(e) => setTravelDate(e.target.value)}
-              />
+                <div className="form-actions">
+                  {step === 2 && (
+                    <>
+                      <button
+                        type="button"
+                        className="link"
+                        onClick={() => setStep(1)}
+                      >
+                        Back
+                      </button>
+                    </>
+                  )}
+                  <button type="submit" className="primary" disabled={loading}>
+                    {loading
+                      ? "Booking..."
+                      : step === 2
+                      ? "Create booking"
+                      : "Next"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/my-bookings")}
+                    className="link"
+                  >
+                    My Bookings
+                  </button>
+                </div>
+              </form>
+            )}
+          </section>
 
-              <label>Seats (tap to select)</label>
-              <div className="seat-map">
-                {selectedBus ? (
-                  Array.from({ length: selectedBus.capacity || 20 }).map(
-                    (_, i) => {
-                      const num = i + 1;
-                      const taken =
-                        selectedBus.takenSeats &&
-                        selectedBus.takenSeats.includes(num);
-                      const selected = selectedSeats.includes(num);
-                      return (
-                        <button
-                          type="button"
-                          key={num}
-                          className={`seat ${
-                            taken ? "taken" : selected ? "selected" : "free"
-                          }`}
-                          disabled={taken}
-                          onClick={() => toggleSeat(num)}
-                        >
-                          {num}
-                        </button>
-                      );
-                    }
-                  )
-                ) : (
-                  <div className="muted">Choose a bus to see seat map</div>
-                )}
-              </div>
-              {fieldErrors.seatNumbers && (
-                <div className="field-error">{fieldErrors.seatNumbers}</div>
-              )}
+          <aside className="right-column card">
+            <h3>Summary</h3>
+            <dl>
+              <dt>Bus</dt>
+              <dd>
+                {selectedBus
+                  ? `${selectedBus.busNumber} · ${selectedBus.busType}`
+                  : selectedRoute
+                  ? `${
+                      selectedRoute.routeName ||
+                      `${selectedRoute.origin} → ${selectedRoute.destination}`
+                    }`
+                  : "—"}
+              </dd>
+              <dt>Date</dt>
+              <dd>{travelDate || "—"}</dd>
+              <dt>Seats</dt>
+              <dd>{selectedSeats.length ? selectedSeats.join(", ") : "—"}</dd>
+              <dt>Passengers</dt>
+              <dd>
+                {passengerNames.filter((p) => p && p.trim()).join(", ") || "—"}
+              </dd>
+              <dt>Fare per seat</dt>
+              <dd>
+                {selectedBus
+                  ? `₹${selectedBus.route?.fare || selectedBus.fare || 0}`
+                  : selectedRoute
+                  ? `₹${selectedRoute.fare || 0}`
+                  : "—"}
+              </dd>
+              <dt>Tax (18%)</dt>
+              <dd>
+                {selectedBus || selectedRoute
+                  ? `₹${(
+                      (selectedBus?.route?.fare ||
+                        selectedBus?.fare ||
+                        selectedRoute?.fare ||
+                        0) * 0.18
+                    ).toFixed(2)}`
+                  : "—"}
+              </dd>
+              <dt>Estimated total</dt>
+              <dd>
+                {selectedBus || selectedRoute
+                  ? `₹${(
+                      selectedSeats.length *
+                      (selectedBus?.route?.fare ||
+                        selectedBus?.fare ||
+                        selectedRoute?.fare ||
+                        0) *
+                      1.18
+                    ).toFixed(2)}`
+                  : "—"}
+              </dd>
+            </dl>
 
-              <label>Passenger names</label>
-              <div className="passenger-list">
-                {selectedSeats.map((seat, idx) => (
-                  <div key={seat} style={{ marginBottom: 8 }}>
-                    <input
-                      placeholder={`Passenger for seat ${seat}`}
-                      value={passengerNames[idx] || ""}
-                      onChange={(e) => updatePassengerName(idx, e.target.value)}
-                      className={
-                        fieldErrors[`passengerNames.${idx}`]
-                          ? "input-error"
-                          : ""
-                      }
-                    />
-                    {fieldErrors[`passengerNames.${idx}`] && (
-                      <div className="field-error">
-                        {fieldErrors[`passengerNames.${idx}`]}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {selectedSeats.length === 0 && (
-                  <div className="muted">
-                    Select seats to enter passenger names
-                  </div>
-                )}
-              </div>
-
-              <label>Contact phone</label>
-              <input
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                className={fieldErrors.contactPhone ? "input-error" : ""}
-              />
-              {fieldErrors.contactPhone && (
-                <div className="field-error">{fieldErrors.contactPhone}</div>
-              )}
-
-              <label>Contact email</label>
-              <input
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                className={fieldErrors.contactEmail ? "input-error" : ""}
-              />
-              {fieldErrors.contactEmail && (
-                <div className="field-error">{fieldErrors.contactEmail}</div>
-              )}
-
-              <label>Boarding point (optional)</label>
-              <input
-                value={boardingPoint}
-                onChange={(e) => setBoardingPoint(e.target.value)}
-              />
-
-              <label>Dropping point (optional)</label>
-              <input
-                value={droppingPoint}
-                onChange={(e) => setDroppingPoint(e.target.value)}
-              />
-
-              <label>Special requests (optional)</label>
-              <textarea
-                value={specialRequests}
-                onChange={(e) => setSpecialRequests(e.target.value)}
-              />
-
-              <label>Payment method</label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                {PaymentMethods.map((m) => (
-                  <option key={m} value={m}>
-                    {m.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-
-              {error && <div className="form-error">{error}</div>}
-
-              <div className="form-actions">
-                {step === 2 && (
-                  <>
-                    <button
-                      type="button"
-                      className="link"
-                      onClick={() => setStep(1)}
-                    >
-                      Back
-                    </button>
-                  </>
-                )}
-                <button type="submit" className="primary" disabled={loading}>
-                  {loading
-                    ? "Booking..."
-                    : step === 2
-                    ? "Create booking"
-                    : "Next"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/my-bookings")}
-                  className="link"
-                >
-                  My Bookings
-                </button>
-              </div>
-            </form>
-          )}
-        </section>
-
-        <aside className="right-column card">
-          <h3>Summary</h3>
-          <dl>
-            <dt>Bus</dt>
-            <dd>
-              {selectedBus
-                ? `${selectedBus.busNumber} · ${selectedBus.busType}`
-                : selectedRoute
-                ? `${
-                    selectedRoute.routeName ||
-                    `${selectedRoute.origin} → ${selectedRoute.destination}`
-                  }`
-                : "—"}
-            </dd>
-            <dt>Date</dt>
-            <dd>{travelDate || "—"}</dd>
-            <dt>Seats</dt>
-            <dd>{selectedSeats.length ? selectedSeats.join(", ") : "—"}</dd>
-            <dt>Passengers</dt>
-            <dd>
-              {passengerNames.filter((p) => p && p.trim()).join(", ") || "—"}
-            </dd>
-            <dt>Fare per seat</dt>
-            <dd>
-              {selectedBus
-                ? `₹${selectedBus.route?.fare || selectedBus.fare || 0}`
-                : selectedRoute
-                ? `₹${selectedRoute.fare || 0}`
-                : "—"}
-            </dd>
-            <dt>Tax (18%)</dt>
-            <dd>
-              {selectedBus || selectedRoute
-                ? `₹${(
-                    (selectedBus?.route?.fare ||
-                      selectedBus?.fare ||
-                      selectedRoute?.fare ||
-                      0) * 0.18
-                  ).toFixed(2)}`
-                : "—"}
-            </dd>
-            <dt>Estimated total</dt>
-            <dd>
-              {selectedBus || selectedRoute
-                ? `₹${(
-                    selectedSeats.length *
-                    (selectedBus?.route?.fare ||
-                      selectedBus?.fare ||
-                      selectedRoute?.fare ||
-                      0) *
-                    1.18
-                  ).toFixed(2)}`
-                : "—"}
-            </dd>
-          </dl>
-
-          <div className="help">
-            <h4>Need help?</h4>
-            <p className="muted">
-              You can cancel up to 2 hours before departure. For support, use
-              Contact Us.
-            </p>
-          </div>
-        </aside>
-      </div>
-    </main>
+            <div className="help">
+              <h4>Need help?</h4>
+              <p className="muted">
+                You can cancel up to 2 hours before departure. For support, use
+                Contact Us.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 };
 
