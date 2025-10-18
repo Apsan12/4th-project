@@ -26,7 +26,6 @@ const authenticated = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
     }
     // console.log("Decoded token payload:", payload);
-    // 5️⃣ Find user
     const user = await User.findByPk(payload.id, {
       attributes: ["id", "role", "email", "username", "isVerified"],
     });
@@ -34,12 +33,10 @@ const authenticated = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized: User not found" });
     }
 
-    // 6️⃣ Check verification
     if (!user.isVerified) {
       return res.status(403).json({ message: "Email not verified" });
     }
 
-    // 7️⃣ Attach user to request
     req.user = user;
     next();
   } catch (err) {

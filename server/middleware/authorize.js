@@ -14,6 +14,7 @@ const authorization = (roles = []) => {
     if (!hasAccess) return res.status(403).json({ message: "Forbidden" });
 
     next();
+
   };
 };
 export default authorization;
